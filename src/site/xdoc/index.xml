@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<document>
+
+  <properties>
+    <title>Maven Application Plugin</title>
+  </properties>
+
+  <body>
+	  <a href="plugin-info.html">Goals</a>
+  </body>
+</document>
