@@ -9,9 +9,9 @@
 
   <body>
     <menu name="Documentation">
-      <item name="Home" href="index.html"/>
       <item name="Goals" href="plugin-info.html"/>
-      <item name="Wiki" href="http://twiki.intranet.1and1.com/bin/view/Pustefix/MavenApplicationPlugin"/>
+      <item name="Generated" href="index.html"/>
+      <item name="Homepage" href="https://sourceforge.net/apps/trac/beezle/wiki/ApplicationHome"/>
     </menu>
 
     ${reports}

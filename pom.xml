@@ -40,7 +40,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-
     <dependencies>
         <dependency>
             <groupId>de.ui.sushi</groupId>
@@ -123,6 +122,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+            </plugin>
         </plugins>
     </reporting>
 
@@ -141,7 +144,7 @@
         </snapshotRepository>
         <site>
             <id>sourceforce</id>
-            <url>scp://shell.sourceforge.net/home/groups/b/be/beezle/htdocs/sushi/site</url>
+            <url>scp://shell.sourceforge.net/home/groups/b/be/beezle/htdocs/application/site</url>
         </site>
     </distributionManagement>
     <profiles>
