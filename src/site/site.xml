@@ -11,7 +11,7 @@
     <menu name="Documentation">
       <item name="Goals" href="plugin-info.html"/>
       <item name="Generated" href="index.html"/>
-      <item name="Homepage" href="https://sourceforge.net/apps/trac/beezle/wiki/ApplicationHome"/>
+      <item name="Sourceforge" href="https://sourceforge.net/apps/trac/beezle/wiki/ApplicationHome"/>
     </menu>
 
     ${reports}
