@@ -6,6 +6,9 @@
       <action dev="mlhartme" type="fix">
         Add jsch dependency to support scp for distribution.
       </action>
+      <action dev="mlhartme" type="update">
+        Maven Dependencies.
+      </action>
     </release>
   </body>
 </document>
