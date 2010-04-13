@@ -50,7 +50,7 @@ public abstract class Application extends AbstractMojo {
     }
 
     public void setDir(String dir) {
-        this.dir = io.node(dir);
+        this.dir = io.file(dir);
     }
 
     public Node getDir() {

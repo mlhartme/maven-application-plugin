@@ -18,6 +18,8 @@
 package de.ui.devel.maven.plugins.application;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -71,15 +73,22 @@ public class DistributeMojo extends Application {
     }
     
     public void doExecute() throws IOException, MojoExecutionException {
+        URI uri;
+
         for (String machine : Strings.split(",", distribute)) {
-            deploy(io.node(machine.trim()));
+            try {
+                uri = new URI(machine.trim());
+            } catch (URISyntaxException e) {
+                throw new MojoExecutionException("invalid distribution target: " + machine.trim(), e);
+            }
+            deploy(io.node(uri));
         }
     }
     
     private void deploy(Node dest) throws IOException {
         List<Node> lst;
 
-        getLog().info("distributing to " + dest.getLocator());
+        getLog().info("distributing to " + dest.getURI());
         if (lockfile != null) {
             lst = dest.getRoot().node("").find(lockfile);
             if (lst.size() > 0) {
@@ -93,13 +102,13 @@ public class DistributeMojo extends Application {
     }
 
     private void move(Node src, Node dest) throws IOException {
-        getLog().info("  move " + src.getLocator() + " " + dest.getLocator());
+        getLog().info("  move " + src.getURI() + " " + dest.getURI());
         dest.deleteOpt();
         src.move(dest);
     }
     
     private void copy(Node src, Node dest) throws IOException {
-        getLog().info("  copy " + src.getLocator() + " " + dest.getLocator());
+        getLog().info("  copy " + src.getURI() + " " + dest.getURI());
         src.copyFile(dest);
         dest.setMode(src.getMode());
     }
