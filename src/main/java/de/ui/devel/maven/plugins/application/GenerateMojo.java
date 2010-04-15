@@ -62,7 +62,7 @@ public class GenerateMojo extends Application {
      * @required
      */
     private String main;
-    
+
     /**
      * Fixed options passed to Java VM. E.g. "-Dfoo=bar"
      * 
@@ -90,7 +90,16 @@ public class GenerateMojo extends Application {
      * @parameter expression="" 
      */
     private String overwrite = "";
-    
+
+    /**
+     * Classifier to deploy applications with.
+     * Specify a different value if you want to deploy multiple applications.
+     *
+     * @parameter default-value="application"
+     *
+     */
+    private String classifier = "";
+
     /**
      * Copied verbatim to the launch code right before the final Java call,
      * placing each extension on a new line. 
@@ -136,14 +145,15 @@ public class GenerateMojo extends Application {
     protected MavenProjectHelper projectHelper;
 
     public GenerateMojo() {
-        this(new IO(), null, null, null);
+        this(new IO(), null, null, null, null);
     }
 
-    public GenerateMojo(IO io, String name, Node dir, String main) {
+    public GenerateMojo(IO io, String name, Node dir, String main, String classifier) {
         super(io);
         this.name = name;
         this.dir = dir;
         this.main = main;
+        this.classifier = classifier;
         this.options = "";
     }
 
@@ -162,7 +172,7 @@ public class GenerateMojo extends Application {
         dir.mkdirsOpt();
         script();
         jar();
-        projectHelper.attachArtifact(project, "sh", "application", ((FileNode) getFile()).getFile());
+        projectHelper.attachArtifact(project, "sh", classifier, ((FileNode) getFile()).getFile());
     }
 
     private void script() throws IOException {
