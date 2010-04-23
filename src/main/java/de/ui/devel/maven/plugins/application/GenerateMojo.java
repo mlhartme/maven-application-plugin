@@ -108,6 +108,13 @@ public class GenerateMojo extends Application {
     private String java = "";
 
     /**
+     * Path to search the Java Executable.
+     *
+     * @parameter default-value="$PATH";
+     */
+    private String path = "";
+
+    /**
      * Copied verbatim to the launch code right before the final Java call,
      * placing each extension on a new line. 
      * You have access to the following script variables: 
@@ -152,16 +159,17 @@ public class GenerateMojo extends Application {
     protected MavenProjectHelper projectHelper;
 
     public GenerateMojo() {
-        this(new IO(), null, null, null, null, null);
+        this(new IO(), null, null, null, null, null, null);
     }
 
-    public GenerateMojo(IO io, String name, Node dir, String main, String classifier, String java) {
+    public GenerateMojo(IO io, String name, Node dir, String main, String classifier, String java, String path) {
         super(io);
         this.name = name;
         this.dir = dir;
         this.main = main;
         this.classifier = classifier;
         this.java = java;
+        this.path = path;
         this.options = "";
     }
 
@@ -208,6 +216,7 @@ public class GenerateMojo extends Application {
                 "APP=\"$APP/$NAME\"",
 
                 // make pom configuration available for "extensions:"
+                "PATH=" + path,
                 "JAVA=" + java,
                 "OPTIONS=" + options,
                 "MAIN=" + main,
