@@ -101,6 +101,13 @@ public class GenerateMojo extends Application {
     private String classifier = "";
 
     /**
+     * Name of the Java Executable to be invoked by the script.
+     *
+     * @parameter default-value="java";
+     */
+    private String java = "";
+
+    /**
      * Copied verbatim to the launch code right before the final Java call,
      * placing each extension on a new line. 
      * You have access to the following script variables: 
@@ -145,15 +152,16 @@ public class GenerateMojo extends Application {
     protected MavenProjectHelper projectHelper;
 
     public GenerateMojo() {
-        this(new IO(), null, null, null, null);
+        this(new IO(), null, null, null, null, null);
     }
 
-    public GenerateMojo(IO io, String name, Node dir, String main, String classifier) {
+    public GenerateMojo(IO io, String name, Node dir, String main, String classifier, String java) {
         super(io);
         this.name = name;
         this.dir = dir;
         this.main = main;
         this.classifier = classifier;
+        this.java = java;
         this.options = "";
     }
 
@@ -199,7 +207,8 @@ public class GenerateMojo extends Application {
                 "APP=$(cd \"$APP\" && pwd)",
                 "APP=\"$APP/$NAME\"",
 
-                // make pom configuration available for "extensions:" 
+                // make pom configuration available for "extensions:"
+                "JAVA=" + java,
                 "OPTIONS=" + options,
                 "MAIN=" + main,
                 "NAME=" + name
@@ -207,7 +216,7 @@ public class GenerateMojo extends Application {
         lines.addAll(extensions);
         // reference jar via $APP to have symbolic links eleminated;
         // do not call with -jar to allow classpath modifications
-        lines.add("java $" + getOptsVar() + " $OPTIONS -cp \"$APP\" $MAIN \"$@\"");
+        lines.add("$JAVA" + " $" + getOptsVar() + " $OPTIONS -cp \"$APP\" $MAIN \"$@\"");
         // explicitly quit the script because I want to append to this file:
         lines.add("exit $?");
         file = getFile();
