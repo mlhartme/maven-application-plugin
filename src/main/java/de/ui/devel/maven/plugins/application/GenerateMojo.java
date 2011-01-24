@@ -223,9 +223,12 @@ public class GenerateMojo extends Application {
                 "NAME=" + name
                 ));
         lines.addAll(extensions);
-        // reference jar via $APP to have symbolic links eleminated;
-        // do not call with -jar to allow classpath modifications
-        lines.add("$JAVA" + " $" + getOptsVar() + " $OPTIONS -cp \"$APP\" $MAIN \"$@\"");
+
+        // Notes
+        // * $OPTIONS before getOptsVar to allow users to override built-in options
+        // * reference jar via $APP to have symbolic links eleminated
+        // * do not call with -jar to allow classpath modifications
+        lines.add("$JAVA $OPTIONS $" + getOptsVar() + " -cp \"$APP\" $MAIN \"$@\"");
         // explicitly quit the script because I want to append to this file:
         lines.add("exit $?");
         file = getFile();

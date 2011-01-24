@@ -6,6 +6,9 @@
       <action dev="mlhartme" type="fix">
         Remove attribute must not remove directories.
       </action>
+      <action dev="mlhartme" type="update">
+        app_OPTS variable now has precedence over options hard-wired into the start script.
+      </action>
     </release>
     <release version="1.1.4" date="2010-04-23">
       <action dev="mlhartme" type="add">
