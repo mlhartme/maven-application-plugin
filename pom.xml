@@ -149,18 +149,16 @@
     <repository>
       <id>pustefix</id>
       <name>Pustefix Maven Repository</name>
-      <url>scpexe://pustefix@pustefixhp.schlund.de/home/pustefix/repository/maven</url>
-      <uniqueVersion>false</uniqueVersion>
+      <url>scpexe://pustefix@pustefix-hp.schlund.de/home/pustefix/repository/maven</url>
     </repository>
     <snapshotRepository>
       <id>pustefix-snapshots</id>
-      <name>TODO</name>
-      <url>http://todo/setup-pustefix-snapshot-depository</url>
-      <uniqueVersion>true</uniqueVersion>
+      <name>Pustefix Maven Snapshot Repository</name>
+      <url>scpexe://pustefix@pustefix-hp.schlund.de/home/pustefix/repository/maven</url>
     </snapshotRepository>
     <site>
       <id>sourceforce</id>
-      <url>scp://shell.sourceforge.net/home/groups/b/be/beezle/htdocs/application/site</url>
+      <url>scpexe://shell.sourceforge.net/home/groups/b/be/beezle/htdocs/application/site</url>
     </site>
   </distributionManagement>
   <profiles>
