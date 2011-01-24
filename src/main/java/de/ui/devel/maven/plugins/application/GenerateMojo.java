@@ -56,7 +56,7 @@ import org.xml.sax.SAXException;
  */
 public class GenerateMojo extends Application {
     /**
-     * Main class to be launched.
+     * Main class to be launched. Specified as a fully qualified Java Class name.
      *
      * @parameter
      * @required
@@ -280,6 +280,9 @@ public class GenerateMojo extends Application {
         archive = loadDependencies(archive, duplicates);
         if (duplicates.size() > 0) {
             throw new MojoExecutionException("duplicate file(s): " + duplicates);
+        }
+        if (!archive.data.join(main.replace('.', '/') + ".class").isFile()) {
+            throw new MojoExecutionException("main class not found: " + main);
         }
         mainAttributes(archive.manifest.getMainAttributes());
         dest = getFile().createAppendStream();
