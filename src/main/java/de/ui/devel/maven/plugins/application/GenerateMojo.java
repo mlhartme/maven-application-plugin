@@ -48,7 +48,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Generates an application file.
- * 
+ *
  * @phase package
  * @goal generate
  * @description Generates an application file
@@ -57,7 +57,7 @@ import org.xml.sax.SAXException;
 public class GenerateMojo extends Application {
     /**
      * Main class to be launched.
-     * 
+     *
      * @parameter
      * @required
      */
@@ -65,29 +65,29 @@ public class GenerateMojo extends Application {
 
     /**
      * Fixed options passed to Java VM. E.g. "-Dfoo=bar"
-     * 
+     *
      * @parameter expression=""
      */
     private String options;
 
     /**
      * Jar file entries to be concatenated in merged jar. Comma-separated list of patterns.
-     * 
+     *
      * @parameter expression=""
      */
     private String concat = "";
-    
+
     /**
      * Jar file entries to removed from merged jar. Comma-separated list of patterns.
-     * 
+     *
      * @parameter expression=""
      */
     private String remove = "";
-    
-    /** 
+
+    /**
      * Jar file entries that may overlap; the last entry wins, it overwrites previous entries
-     * 
-     * @parameter expression="" 
+     *
+     * @parameter expression=""
      */
     private String overwrite = "";
 
@@ -116,33 +116,33 @@ public class GenerateMojo extends Application {
 
     /**
      * Copied verbatim to the launch code right before the final Java call,
-     * placing each extension on a new line. 
-     * You have access to the following script variables: 
-     *   MAIN (the main class as specified in your pom), 
-     *   NAME (application name as specified in your pom), 
-     *   OPTIONS (as specified in your pom) and 
+     * placing each extension on a new line.
+     * You have access to the following script variables:
+     *   MAIN (the main class as specified in your pom),
+     *   NAME (application name as specified in your pom),
+     *   OPTIONS (as specified in your pom) and
      *   APP (absolute normalized path to the application file).
-     * 
+     *
      * Note that these variables are not exported, to access them from your application, you have to
      * turn them into properties!
-     * 
+     *
      * @parameter
      */
     private List<String> extensions = new ArrayList<String>();
-    
+
     /**
      * Scopes to include in compound jar. There's usually no need to touch this option.
      * Defaults to "compile" and "runtime".
-     * 
+     *
      * @parameter
      */
     private List<String> scopes = Arrays.asList(Artifact.SCOPE_COMPILE, Artifact.SCOPE_RUNTIME);
-    
+
     /**
      * @parameter expression="${project.build.directory}/${project.build.finalName}.jar"
      */
     private String projectJar;
-    
+
     /**
      * Internal parameter.
      * @parameter expression="${project}"
@@ -180,7 +180,7 @@ public class GenerateMojo extends Application {
             throw new MojoExecutionException("cannot generate application: " + e.getMessage(), e);
         }
     }
-    
+
     public void doExecute() throws IOException, MojoExecutionException {
         getLog().info("generating application: " + getFile());
         validate(name);
@@ -194,7 +194,7 @@ public class GenerateMojo extends Application {
     private void script() throws IOException {
         Node file;
         List<String> lines;
-        
+
         lines = new ArrayList<String>();
         lines.addAll(Arrays.asList(
                 "#!/bin/sh",
@@ -232,7 +232,7 @@ public class GenerateMojo extends Application {
         file.writeLines(lines);
         file.setMode(0755);
     }
-    
+
     public static void validate(String name) throws MojoExecutionException {
         for (int i = 0, max = name.length(); i < max; i++) {
             if (Character.isWhitespace(name.charAt(i))) {
@@ -240,13 +240,13 @@ public class GenerateMojo extends Application {
             }
         }
     }
-    
+
     //--
 
     private List<Artifact> getDependencies() {
         List<Artifact> artifacts;
         Artifact a;
-        
+
         artifacts = new ArrayList<Artifact>();
         for (Iterator<?> i = project.getArtifacts().iterator(); i.hasNext(); ) {
             a = (Artifact) i.next();
@@ -258,7 +258,7 @@ public class GenerateMojo extends Application {
         if (a.getFile() == null) {
             // happens if application:generate is called directly from the command line
             a.setFile(new File(projectJar));
-        }            
+        }
         artifacts.add(a);
         return artifacts;
     }
@@ -266,12 +266,12 @@ public class GenerateMojo extends Application {
     public String getOptsVar() {
         return name.toUpperCase().replace('-', '_') + "_OPTS";
     }
-    
+
     public void jar() throws IOException, MojoExecutionException {
         Archive archive;
         List<Duplicate> duplicates;
         OutputStream dest;
-        
+
         archive = Archive.createJar(io);
         duplicates = new ArrayList<Duplicate>();
         archive = loadDependencies(archive, duplicates);
@@ -288,13 +288,13 @@ public class GenerateMojo extends Application {
         Document plexus;
         File file;
         Archive add;
-        
+
         plexus = null;
         for (Artifact artifact : getDependencies()) {
             getLog().info("adding " + artifact);
             file = artifact.getFile();
             if (file == null) {
-                throw new RuntimeException("unresolved dependency: " + 
+                throw new RuntimeException("unresolved dependency: " +
                         artifact.getGroupId() + " " + artifact.getArtifactId() + "-" + artifact.getVersion() + ".jar");
             }
             add = Archive.loadJar(io.file(file));
@@ -307,7 +307,7 @@ public class GenerateMojo extends Application {
         plexusSave(archive.data, plexus);
         return archive;
     }
-    
+
     private static final String ROOT = "component-set";
     private static final String COMPONENTS = "components";
 
@@ -315,7 +315,7 @@ public class GenerateMojo extends Application {
         List<Node> mayOverwrite;
         Node destfile;
         String relative;
-            
+
         mayOverwrite = mayOverwrite(srcdir);
         for (Node srcfile : srcdir.find("**/*")) {
             relative = srcfile.getRelative(srcdir);
@@ -345,7 +345,7 @@ public class GenerateMojo extends Application {
     private static List<String> split(String str) {
         return Strings.trim(Strings.split(",", str));
     }
-    
+
     private List<Node> mayOverwrite(Node srcdir) throws IOException {
         List<Node> mayOverwrite;
 
@@ -364,8 +364,12 @@ public class GenerateMojo extends Application {
 
     private void removeFiles(Node srcdir, String path) throws IOException {
         for (Node srcfile : srcdir.find(path)) {
-            getLog().debug("removing " + srcfile);
-            srcfile.delete();
+            if (srcfile.isDirectory()) {
+                // skip - I'd delete all contained files
+            } else {
+                getLog().debug("removing " + srcfile);
+                srcfile.delete();
+            }
         }
     }
 
@@ -388,7 +392,7 @@ public class GenerateMojo extends Application {
         String lf;
         StringBuilder builder;
         int idx;
-        
+
         src = srcdir.join(path);
         dest = destdir.join(path);
         if (!dest.exists()) {
@@ -407,11 +411,11 @@ public class GenerateMojo extends Application {
         src.delete();
         getLog().debug("merged " + path + ":\n" + builder);
     }
-    
+
     private Node plexusFile(Node root) {
         return root.join("META-INF/plexus/components.xml");
     }
-    
+
     private void plexusSave(Node root, Document plexus) throws IOException {
         if (plexus != null) {
             getLog().info("merged plexus components");
@@ -423,7 +427,7 @@ public class GenerateMojo extends Application {
         Element componentSet;
         Element components;
         Node file;
-        
+
         file = plexusFile(root);
         if (!file.exists()) {
             return plexus;
@@ -452,7 +456,7 @@ public class GenerateMojo extends Application {
         file.delete();
         return plexus;
     }
-    
+
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
     private void mainAttributes(Attributes attributes) throws ArchiveException {
@@ -466,7 +470,7 @@ public class GenerateMojo extends Application {
     }
 
     private String getOrganization() {
-        if (project.getOrganization() != null) { 
+        if (project.getOrganization() != null) {
             return project.getOrganization().getName();
         } else {
             return "unkown organization";
