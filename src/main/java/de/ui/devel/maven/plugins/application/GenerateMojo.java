@@ -64,7 +64,9 @@ public class GenerateMojo extends Application {
     private String main;
 
     /**
-     * Fixed options passed to Java VM. E.g. "-Dfoo=bar"
+     * Fixed options passed to Java VM. You can use this to make local shell variables used in the launch 
+     * script available Java. E.g. use "-Dapp=$APP" to make the fully qualified application name
+     * available as a system property "app".
      *
      * @parameter expression=""
      */
