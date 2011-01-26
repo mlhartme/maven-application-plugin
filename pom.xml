@@ -5,7 +5,6 @@
   <name>Maven Application Plugin</name>
   <url>https://sourceforge.net/apps/trac/beezle/wiki/ApplicationHome</url>
 
-
   <groupId>de.ui.maven.plugins</groupId>
   <artifactId>application</artifactId>
   <version>1.1.5-SNAPSHOT</version>
@@ -83,6 +82,16 @@
         <version>1.0-beta-7</version>
       </extension>
     </extensions>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.0-beta-3</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
 
     <plugins>
       <plugin>
