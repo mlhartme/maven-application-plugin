@@ -7,7 +7,7 @@
 
   <groupId>com.oneandone.maven.plugins</groupId>
   <artifactId>application</artifactId>
-  <version>1.2.0-SNAPSHOT</version>
+  <version>1.2.0</version>
   <packaging>maven-plugin</packaging>
 
   <organization>
@@ -30,9 +30,9 @@
   </developers>
 
   <scm>
-    <connection>scm:svn:https://beezle.svn.sourceforge.net/svnroot/beezle/application/trunk</connection>
-    <developerConnection>scm:svn:https://beezle.svn.sourceforge.net/svnroot/beezle/application/trunk</developerConnection>
-    <url>http://beezle.svn.sourceforge.net/viewvc/beezle/application/trunk</url>
+    <connection>scm:svn:https://beezle.svn.sourceforge.net/svnroot/beezle/application/tags/application-1.2.0</connection>
+    <developerConnection>scm:svn:https://beezle.svn.sourceforge.net/svnroot/beezle/application/tags/application-1.2.0</developerConnection>
+    <url>http://beezle.svn.sourceforge.net/viewvc/beezle/application/tags/application-1.2.0</url>
   </scm>
 
   <properties>
