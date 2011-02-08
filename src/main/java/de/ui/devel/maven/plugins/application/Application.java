@@ -18,13 +18,13 @@
 package de.ui.devel.maven.plugins.application;
 
 import org.apache.maven.plugin.AbstractMojo;
-import de.ui.sushi.fs.IO;
-import de.ui.sushi.fs.Node;
+import com.oneandone.sushi.fs.World;
+import com.oneandone.sushi.fs.Node;
 
 /**
  */
 public abstract class Application extends AbstractMojo {
-    protected final IO io;
+    protected final World world;
     
     /**
      * Directory where to place the Launch Script and the executable Jar file. 
@@ -42,15 +42,15 @@ public abstract class Application extends AbstractMojo {
     protected String name;
 
     public Application() {
-        this(new IO());
+        this(new World());
     }
 
-    public Application(IO io) {
-        this.io = io;
+    public Application(World world) {
+        this.world = world;
     }
 
     public void setDir(String dir) {
-        this.dir = io.file(dir);
+        this.dir = world.file(dir);
     }
 
     public Node getDir() {

@@ -23,9 +23,9 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import de.ui.sushi.fs.IO;
-import de.ui.sushi.fs.Node;
-import de.ui.sushi.util.Strings;
+import com.oneandone.sushi.fs.World;
+import com.oneandone.sushi.fs.Node;
+import com.oneandone.sushi.util.Strings;
 
 /**
  * Distributes application files.
@@ -57,11 +57,11 @@ public class DistributeMojo extends Application {
     private String lockfile;
     
     public DistributeMojo() {
-        this(new IO());
+        this(new World());
     }
 
-    public DistributeMojo(IO io) {
-        super(io);
+    public DistributeMojo(World world) {
+        super(world);
     }
 
     public void execute() throws MojoExecutionException {
@@ -81,7 +81,7 @@ public class DistributeMojo extends Application {
             } catch (URISyntaxException e) {
                 throw new MojoExecutionException("invalid distribution target: " + machine.trim(), e);
             }
-            deploy(io.node(uri));
+            deploy(world.node(uri));
         }
     }
     
@@ -90,7 +90,7 @@ public class DistributeMojo extends Application {
 
         getLog().info("distributing to " + dest.getURI());
         if (lockfile != null) {
-            lst = dest.getRoot().node("").find(lockfile);
+            lst = dest.getRootNode().find(lockfile);
             if (lst.size() > 0) {
                 throw new IOException("locked: " + lst);
             }

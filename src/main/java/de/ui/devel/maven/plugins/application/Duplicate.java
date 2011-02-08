@@ -20,7 +20,7 @@ package de.ui.devel.maven.plugins.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.ui.sushi.fs.Node;
+import com.oneandone.sushi.fs.Node;
 
 public class Duplicate {
     private final String path;

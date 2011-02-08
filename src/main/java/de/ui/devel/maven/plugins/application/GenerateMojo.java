@@ -34,14 +34,14 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import de.ui.sushi.archive.Archive;
-import de.ui.sushi.archive.ArchiveException;
-import de.ui.sushi.fs.IO;
-import de.ui.sushi.fs.Node;
-import de.ui.sushi.fs.file.FileNode;
-import de.ui.sushi.util.Strings;
-import de.ui.sushi.xml.Builder;
-import de.ui.sushi.xml.Dom;
+import com.oneandone.sushi.archive.Archive;
+import com.oneandone.sushi.archive.ArchiveException;
+import com.oneandone.sushi.fs.World;
+import com.oneandone.sushi.fs.Node;
+import com.oneandone.sushi.fs.file.FileNode;
+import com.oneandone.sushi.util.Strings;
+import com.oneandone.sushi.xml.Builder;
+import com.oneandone.sushi.xml.Dom;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -161,11 +161,11 @@ public class GenerateMojo extends Application {
     protected MavenProjectHelper projectHelper;
 
     public GenerateMojo() {
-        this(new IO(), null, null, null, null, null, null);
+        this(new World(), null, null, null, null, null, null);
     }
 
-    public GenerateMojo(IO io, String name, Node dir, String main, String classifier, String java, String path) {
-        super(io);
+    public GenerateMojo(World world, String name, Node dir, String main, String classifier, String java, String path) {
+        super(world);
         this.name = name;
         this.dir = dir;
         this.main = main;
@@ -277,7 +277,7 @@ public class GenerateMojo extends Application {
         List<Duplicate> duplicates;
         OutputStream dest;
 
-        archive = Archive.createJar(io);
+        archive = Archive.createJar(world);
         duplicates = new ArrayList<Duplicate>();
         archive = loadDependencies(archive, duplicates);
         if (duplicates.size() > 0) {
@@ -305,7 +305,7 @@ public class GenerateMojo extends Application {
                 throw new RuntimeException("unresolved dependency: " +
                         artifact.getGroupId() + " " + artifact.getArtifactId() + "-" + artifact.getVersion() + ".jar");
             }
-            add = Archive.loadJar(io.file(file));
+            add = Archive.loadJar(world.file(file));
             removeFiles(add.data);
             concat(add.data, archive.data);
             copy(add.data, archive.data, duplicates);
@@ -407,7 +407,7 @@ public class GenerateMojo extends Application {
             dest.getParent().mkdirsOpt();
             dest.writeString("");
         }
-        lf = srcdir.getIO().os.lineSeparator;
+        lf = srcdir.getWorld().os.lineSeparator;
         builder = new StringBuilder();
         builder.append(src.readString());
         idx = builder.lastIndexOf(lf);
@@ -441,7 +441,7 @@ public class GenerateMojo extends Application {
             return plexus;
         }
         if (plexus == null) {
-            plexus = io.getXml().builder.createDocument(ROOT);
+            plexus = world.getXml().builder.createDocument(ROOT);
             components = Builder.element(plexus.getDocumentElement(), COMPONENTS);
         } else {
             components = (Element) plexus.getDocumentElement().getFirstChild();
