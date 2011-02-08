@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.ui.devel.maven.plugins.application;
+package com.oneandone.devel.maven.plugins.application;
 
 import java.io.IOException;
 import java.net.URI;
