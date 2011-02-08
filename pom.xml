@@ -5,9 +5,9 @@
   <name>Maven Application Plugin</name>
   <url>https://sourceforge.net/apps/trac/beezle/wiki/ApplicationHome</url>
 
-  <groupId>de.ui.maven.plugins</groupId>
+  <groupId>com.oneandone.maven.plugins</groupId>
   <artifactId>application</artifactId>
-  <version>1.1.6-SNAPSHOT</version>
+  <version>1.2.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <organization>
