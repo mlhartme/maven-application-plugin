@@ -23,7 +23,7 @@ import com.oneandone.sushi.fs.Node;
 
 /**
  */
-public abstract class Application extends AbstractMojo {
+public abstract class BaseMojo extends AbstractMojo {
     protected final World world;
     
     /**
@@ -41,11 +41,11 @@ public abstract class Application extends AbstractMojo {
      */
     protected String name;
 
-    public Application() {
+    public BaseMojo() {
         this(new World());
     }
 
-    public Application(World world) {
+    public BaseMojo(World world) {
         this.world = world;
     }
 

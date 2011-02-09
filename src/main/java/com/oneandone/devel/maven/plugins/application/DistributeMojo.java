@@ -32,7 +32,7 @@ import com.oneandone.sushi.util.Strings;
  * 
  * @goal distribute
  */
-public class DistributeMojo extends Application {
+public class DistributeMojo extends BaseMojo {
     /**
      * Comma separated list of targets. E.g. ssh://root@pumama.schlund.de/home/clustercontrol/launcher
      * 

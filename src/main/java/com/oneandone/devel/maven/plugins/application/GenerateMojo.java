@@ -54,7 +54,7 @@ import org.xml.sax.SAXException;
  * @description Generates an application file
  * @requiresDependencyResolution runtime
  */
-public class GenerateMojo extends Application {
+public class GenerateMojo extends BaseMojo {
     /**
      * Main class to be launched. Specified as a fully qualified Java Class name.
      *
@@ -115,6 +115,12 @@ public class GenerateMojo extends Application {
      * @parameter default-value="$PATH";
      */
     private String path = "";
+
+    /**
+     * When false, the plugin reports an error if source jars contains duplicate files, even though they don't differ.
+     * @parameter default-value="false";
+     */
+    private boolean acceptEqualDuplicates;
 
     /**
      * Copied verbatim to the launch code right before the final Java call,
@@ -274,14 +280,14 @@ public class GenerateMojo extends Application {
 
     public void jar() throws IOException, MojoExecutionException {
         Archive archive;
-        List<Duplicate> duplicates;
+        List<String> duplicates;
         OutputStream dest;
 
         archive = Archive.createJar(world);
-        duplicates = new ArrayList<Duplicate>();
+        duplicates = new ArrayList<String>();
         archive = loadDependencies(archive, duplicates);
         if (duplicates.size() > 0) {
-            throw new MojoExecutionException("duplicate file(s): " + duplicates);
+            throw new MojoExecutionException("duplicate file(s):\n" + Strings.indent(Strings.join("\n", duplicates), ""));
         }
         if (!archive.data.join(main.replace('.', '/') + ".class").isFile()) {
             throw new MojoExecutionException("main class not found: " + main);
@@ -292,12 +298,17 @@ public class GenerateMojo extends Application {
         dest.close();
     }
 
-    private Archive loadDependencies(Archive archive, List<Duplicate> duplicates) throws IOException {
+    private Archive loadDependencies(Archive archive, List<String> duplicateMessages) throws IOException {
         Document plexus;
+        Sources sources;
         File file;
         Archive add;
+        Node jar;
+        List<String> duplicatePaths;
 
         plexus = null;
+        sources = new Sources();
+        duplicatePaths = new ArrayList<String>();
         for (Artifact artifact : getDependencies()) {
             getLog().info("adding " + artifact);
             file = artifact.getFile();
@@ -305,12 +316,17 @@ public class GenerateMojo extends Application {
                 throw new RuntimeException("unresolved dependency: " +
                         artifact.getGroupId() + " " + artifact.getArtifactId() + "-" + artifact.getVersion() + ".jar");
             }
-            add = Archive.loadJar(world.file(file));
+            jar = world.file(file);
+            add = Archive.loadJar(jar);
+            sources.addAll(add.data, jar);
             removeFiles(add.data);
             concat(add.data, archive.data);
-            copy(add.data, archive.data, duplicates);
+            copy(add.data, archive.data, duplicatePaths);
             archive.mergeManifest(add.manifest);
             plexus = plexusMerge(archive.data, plexus);
+        }
+        for (String path : duplicatePaths) {
+            duplicateMessages.add(path + ": duplicated in " + sources.get(path));
         }
         plexusSave(archive.data, plexus);
         return archive;
@@ -319,10 +335,11 @@ public class GenerateMojo extends Application {
     private static final String ROOT = "component-set";
     private static final String COMPONENTS = "components";
 
-    private void copy(Node srcdir, Node destdir, List<Duplicate> duplicates) throws IOException {
+    private void copy(Node srcdir, Node destdir, List<String> duplicates) throws IOException {
         List<Node> mayOverwrite;
         Node destfile;
         String relative;
+        boolean diff;
 
         mayOverwrite = mayOverwrite(srcdir);
         for (Node srcfile : srcdir.find("**/*")) {
@@ -332,16 +349,17 @@ public class GenerateMojo extends Application {
                 destfile.mkdirsOpt();
             } else {
                 if (destfile.exists()) {
-                    if (srcfile.diff(destfile)) {
+                    diff = srcfile.diff(destfile);
+                    if (!acceptEqualDuplicates || diff) {
                         if (mayOverwrite.contains(srcfile)) {
-                            getLog().debug("overwriting " + relative);
+                            getLog().debug("overwriting " + relative + (diff ? "" : " (equal duplicate)"));
                             destfile.delete();
                             srcfile.copyFile(destfile);
                         } else {
-                            Duplicate.add(duplicates, relative, srcdir);
+                            duplicates.add(relative);
                         }
                     } else {
-                        getLog().debug("same file: " + relative);
+                        getLog().debug("equal duplicate: " + relative);
                     }
                 } else {
                     srcfile.copyFile(destfile);

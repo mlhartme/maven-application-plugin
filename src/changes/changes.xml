@@ -2,7 +2,15 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
-    <release version="1.2.0" date="2011-02-??">
+    <release version="1.2.0" date="2011-02-09">
+      <action dev="mlhartme" type="add">
+        Added acceptEqualDuplicates option.
+      </action>
+      <action dev="mlhartme" type="update">
+        Improved duplicate error message.
+      </action>
+    </release>
+    <release version="1.2.0" date="2011-02-08">
       <action dev="mlhartme" type="update">
         Switch to Sushi 2.1.0.
       </action>

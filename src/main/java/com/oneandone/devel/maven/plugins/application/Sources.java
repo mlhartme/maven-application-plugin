@@ -17,38 +17,39 @@
 
 package com.oneandone.devel.maven.plugins.application;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.oneandone.sushi.fs.Node;
 
-public class Duplicate {
-    private final String path;
-    private final List<Node> sources;
-    
-    public Duplicate(String path, Node source) {
-        this(path);
-        sources.add(source);
+public class Sources {
+    private Map<String, List<Node>> map;
+
+    public Sources() {
+        this.map = new HashMap<String, List<Node>>();
     }
-    
-    public Duplicate(String path) {
-        this.path = path;
-        this.sources = new ArrayList<Node>();
-    }
-    
-    @Override
-    public String toString() {
-        // TODO: source is not very useful because memory a memory node has a poor toString()
-        return path;
-    }
-    
-    public static void add(List<Duplicate> duplicates, String path, Node file) {
-        for (Duplicate duplicate : duplicates) {
-            if (path.equals(duplicate.path)) {
-                duplicate.sources.add(file);
-                return;
-            }
+
+    public void add(String path, Node source) {
+        List<Node> lst;
+
+        lst = map.get(path);
+        if (lst == null) {
+            lst = new ArrayList<Node>();
+            map.put(path, lst);
         }
-        duplicates.add(new Duplicate(path, file));
+        lst.add(source);
+    }
+
+    public void addAll(Node root, Node source) throws IOException {
+        for (Node node : root.find("**/*")) {
+            add(node.getRelative(root), source);
+        }
+    }
+
+    public List<Node> get(String path) {
+        return map.get(path);
     }
 }
