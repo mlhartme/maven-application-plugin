@@ -20,6 +20,7 @@ package com.oneandone.devel.maven.plugins.application;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -51,5 +52,48 @@ public class Sources {
 
     public List<Node> get(String path) {
         return map.get(path);
+    }
+
+    public void retain(List<String> paths) {
+        Iterator<Map.Entry<String, List<Node>>> iter;
+        Map.Entry<String, List<Node>> entry;
+
+        iter = map.entrySet().iterator();
+        while (iter.hasNext()) {
+            entry = iter.next();
+            if (!paths.contains(entry.getKey())) {
+                iter.remove();
+            }
+        }
+    }
+
+    public String toString() {
+        StringBuilder builder;
+        Iterator<Map.Entry<String, List<Node>>> iter;
+        Iterator<Map.Entry<String, List<Node>>> sub;
+        Map.Entry<String, List<Node>> entry;
+        List<Node> sources;
+
+        builder = new StringBuilder();
+        while (true) {
+            iter = map.entrySet().iterator();
+            if (!iter.hasNext()) {
+                break;
+            }
+            entry = iter.next();
+            sources = entry.getValue();
+            builder.append("  ").append(sources.toString()).append(":\n");
+            builder.append("    ").append(entry.getKey()).append('\n');
+            iter.remove();
+            sub = map.entrySet().iterator();
+            while (sub.hasNext()) {
+                entry = sub.next();
+                if (sources.equals(entry.getValue())) {
+                    builder.append("    ").append(entry.getKey()).append('\n');
+                    sub.remove();
+                }
+            }
+        }
+        return builder.toString();
     }
 }

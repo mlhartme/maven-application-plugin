@@ -280,15 +280,10 @@ public class GenerateMojo extends BaseMojo {
 
     public void jar() throws IOException, MojoExecutionException {
         Archive archive;
-        List<String> duplicates;
         OutputStream dest;
 
         archive = Archive.createJar(world);
-        duplicates = new ArrayList<String>();
-        archive = loadDependencies(archive, duplicates);
-        if (duplicates.size() > 0) {
-            throw new MojoExecutionException("duplicate file(s):\n" + Strings.indent(Strings.join("\n", duplicates), ""));
-        }
+        archive = loadDependencies(archive);
         if (!archive.data.join(main.replace('.', '/') + ".class").isFile()) {
             throw new MojoExecutionException("main class not found: " + main);
         }
@@ -298,7 +293,7 @@ public class GenerateMojo extends BaseMojo {
         dest.close();
     }
 
-    private Archive loadDependencies(Archive archive, List<String> duplicateMessages) throws IOException {
+    private Archive loadDependencies(Archive archive) throws IOException, MojoExecutionException {
         Document plexus;
         Sources sources;
         File file;
@@ -325,8 +320,9 @@ public class GenerateMojo extends BaseMojo {
             archive.mergeManifest(add.manifest);
             plexus = plexusMerge(archive.data, plexus);
         }
-        for (String path : duplicatePaths) {
-            duplicateMessages.add(path + ": duplicated in " + sources.get(path));
+        if (duplicatePaths.size() > 0) {
+            sources.retain(duplicatePaths);
+            throw new MojoExecutionException("duplicate files:\n" + sources.toString());
         }
         plexusSave(archive.data, plexus);
         return archive;
