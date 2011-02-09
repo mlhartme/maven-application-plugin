@@ -87,11 +87,19 @@ public class GenerateMojo extends BaseMojo {
     private String remove = "";
 
     /**
-     * Jar file entries that may overlap; the last entry wins, it overwrites previous entries
+     * Jar file entries that may overlap; the last entry wins, it overwrites previous entries.
+     * Comma-separated list of patterns.
      *
      * @parameter expression=""
      */
     private String overwrite = "";
+
+    /**
+     * Jar file entries that may be duplicates if they are equal. Comma-separated list of patterns.
+     *
+     * @parameter expression=""
+     */
+    private String equal = "";
 
     /**
      * Classifier to deploy applications with.
@@ -115,12 +123,6 @@ public class GenerateMojo extends BaseMojo {
      * @parameter default-value="$PATH";
      */
     private String path = "";
-
-    /**
-     * When false, the plugin reports an error if source jars contains duplicate files, even though they don't differ.
-     * @parameter default-value="false";
-     */
-    private boolean acceptEqualDuplicates;
 
     /**
      * Copied verbatim to the launch code right before the final Java call,
@@ -332,12 +334,13 @@ public class GenerateMojo extends BaseMojo {
     private static final String COMPONENTS = "components";
 
     private void copy(Node srcdir, Node destdir, List<String> duplicates) throws IOException {
+        List<Node> mayEqual;
         List<Node> mayOverwrite;
         Node destfile;
         String relative;
-        boolean diff;
 
-        mayOverwrite = mayOverwrite(srcdir);
+        mayEqual = find(srcdir, equal);
+        mayOverwrite = find(srcdir, overwrite);
         for (Node srcfile : srcdir.find("**/*")) {
             relative = srcfile.getRelative(srcdir);
             destfile = destdir.join(relative);
@@ -345,17 +348,20 @@ public class GenerateMojo extends BaseMojo {
                 destfile.mkdirsOpt();
             } else {
                 if (destfile.exists()) {
-                    diff = srcfile.diff(destfile);
-                    if (!acceptEqualDuplicates || diff) {
+                    if (srcfile.diff(destfile)) {
                         if (mayOverwrite.contains(srcfile)) {
-                            getLog().debug("overwriting " + relative + (diff ? "" : " (equal duplicate)"));
+                            getLog().debug("overwrite " + relative);
                             destfile.delete();
                             srcfile.copyFile(destfile);
                         } else {
                             duplicates.add(relative);
                         }
                     } else {
-                        getLog().debug("equal duplicate: " + relative);
+                        if (mayEqual.contains(srcfile)) {
+                            getLog().debug("equal " + relative);
+                        } else {
+                            duplicates.add(relative);
+                        }
                     }
                 } else {
                     srcfile.copyFile(destfile);
@@ -368,11 +374,11 @@ public class GenerateMojo extends BaseMojo {
         return Strings.trim(Strings.split(",", str));
     }
 
-    private List<Node> mayOverwrite(Node srcdir) throws IOException {
+    private List<Node> find(Node srcdir, String property) throws IOException {
         List<Node> mayOverwrite;
 
         mayOverwrite = new ArrayList<Node>();
-        for (String path : split(overwrite)) {
+        for (String path : split(property)) {
             mayOverwrite.addAll(srcdir.find(path));
         }
         return mayOverwrite;

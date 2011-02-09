@@ -4,7 +4,7 @@
   <body>
     <release version="1.2.0" date="2011-02-09">
       <action dev="mlhartme" type="add">
-        Added acceptEqualDuplicates option.
+        Added equal option.
       </action>
       <action dev="mlhartme" type="update">
         Improved duplicate error message.
