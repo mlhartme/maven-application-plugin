@@ -25,38 +25,39 @@ import java.util.List;
 import java.util.Map;
 
 import com.oneandone.sushi.fs.Node;
+import org.apache.maven.artifact.Artifact;
 
 public class Sources {
-    private Map<String, List<Node>> map;
+    private Map<String, List<Artifact>> map;
 
     public Sources() {
-        this.map = new HashMap<String, List<Node>>();
+        this.map = new HashMap<String, List<Artifact>>();
     }
 
-    public void add(String path, Node source) {
-        List<Node> lst;
+    public void add(String path, Artifact source) {
+        List<Artifact> lst;
 
         lst = map.get(path);
         if (lst == null) {
-            lst = new ArrayList<Node>();
+            lst = new ArrayList<Artifact>();
             map.put(path, lst);
         }
         lst.add(source);
     }
 
-    public void addAll(Node root, Node source) throws IOException {
+    public void addAll(Node root, Artifact source) throws IOException {
         for (Node node : root.find("**/*")) {
             add(node.getRelative(root), source);
         }
     }
 
-    public List<Node> get(String path) {
+    public List<Artifact> get(String path) {
         return map.get(path);
     }
 
     public void retain(List<String> paths) {
-        Iterator<Map.Entry<String, List<Node>>> iter;
-        Map.Entry<String, List<Node>> entry;
+        Iterator<Map.Entry<String, List<Artifact>>> iter;
+        Map.Entry<String, List<Artifact>> entry;
 
         iter = map.entrySet().iterator();
         while (iter.hasNext()) {
@@ -69,10 +70,10 @@ public class Sources {
 
     public String toString() {
         StringBuilder builder;
-        Iterator<Map.Entry<String, List<Node>>> iter;
-        Iterator<Map.Entry<String, List<Node>>> sub;
-        Map.Entry<String, List<Node>> entry;
-        List<Node> sources;
+        Iterator<Map.Entry<String, List<Artifact>>> iter;
+        Iterator<Map.Entry<String, List<Artifact>>> sub;
+        Map.Entry<String, List<Artifact>> entry;
+        List<Artifact> sources;
 
         builder = new StringBuilder();
         while (true) {

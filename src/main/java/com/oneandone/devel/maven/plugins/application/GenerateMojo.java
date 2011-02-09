@@ -313,7 +313,7 @@ public class GenerateMojo extends BaseMojo {
             }
             jar = world.file(file);
             add = Archive.loadJar(jar);
-            sources.addAll(add.data, jar);
+            sources.addAll(add.data, artifact);
             removeFiles(add.data);
             concat(add.data, archive.data);
             copy(add.data, archive.data, duplicatePaths);
