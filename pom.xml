@@ -179,7 +179,7 @@
     </snapshotRepository>
     <site>
       <id>sourceforge</id>
-      <url>scp://shell.sourceforge.net/home/groups/b/be/beezle/htdocs/application/site</url>
+      <url>scp://shell.sourceforge.net/home/project-web/beezle/htdocs/application/site</url>
     </site>
   </distributionManagement>
   <profiles>
