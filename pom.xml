@@ -74,15 +74,6 @@
   </dependencies>
 
   <build>
-    <!-- for ssh deployment in maven 3 -->
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-ssh-external</artifactId>
-        <version>1.0-beta-7</version>
-      </extension>
-    </extensions>
-
     <pluginManagement>
       <plugins>
         <plugin>
@@ -175,15 +166,16 @@
   </reporting>
 
   <distributionManagement>
+    <!-- see http://stackoverflow.com/questions/2733447/can-maven-wagon-plugin-use-a-private-key-for-scp for configuration tips -->
     <repository>
       <id>pustefix</id>
       <name>Pustefix Maven Repository</name>
-      <url>scpexe://pustefix@pustefix-hp.schlund.de/home/pustefix/repository/maven</url>
+      <url>scp://pustefix@pustefix-hp.schlund.de/home/pustefix/repository/maven</url>
     </repository>
     <snapshotRepository>
       <id>pustefix-snapshots</id>
       <name>Pustefix Maven Snapshot Repository</name>
-      <url>scpexe://pustefix@pustefix-hp.schlund.de/home/pustefix/repository/maven</url>
+      <url>scp://pustefix@pustefix-hp.schlund.de/home/pustefix/repository/maven</url>
     </snapshotRepository>
     <site>
       <id>sourceforge</id>
