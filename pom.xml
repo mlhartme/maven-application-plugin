@@ -4,11 +4,24 @@
 
   <name>Maven Application Plugin</name>
   <url>https://sourceforge.net/apps/trac/beezle/wiki/ApplicationHome</url>
+  <description>Generates an application file. An application file is a single file containing your entire application,
+    it's all you need to distribute or run the application. Technically, an application file is a Bash shell script
+    with an appended executable jar file. You can invoke it directly or you can pass it as an argument to java -jar.
+    You can rename it without breaking the application.
+  </description>
 
   <groupId>net.sf.beezle.maven.plugins</groupId>
   <artifactId>application</artifactId>
-  <version>1.3.1-SNAPSHOT</version>
+  <version>1.3.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
+
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License, Version 2.1</name>
+      <url>http://www.gnu.org/licenses/lgpl-2.1.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
   <organization>
     <name>1&amp;1</name>
