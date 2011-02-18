@@ -160,59 +160,52 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.6</version>
+        <version>2.7</version>
       </plugin>
     </plugins>
   </reporting>
 
   <distributionManagement>
-    <!-- see http://stackoverflow.com/questions/2733447/can-maven-wagon-plugin-use-a-private-key-for-scp for configuration tips -->
     <repository>
-      <id>pustefix</id>
-      <name>Pustefix Maven Repository</name>
-      <url>scp://pustefix@pustefix-hp.schlund.de/home/pustefix/repository/maven</url>
+      <id>sonatype-nexus-staging</id>
+      <name>Sonatype Nexus Staging Repository</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
     <snapshotRepository>
-      <id>pustefix-snapshots</id>
-      <name>Pustefix Maven Snapshot Repository</name>
-      <url>scp://pustefix@pustefix-hp.schlund.de/home/pustefix/repository/maven</url>
+      <id>sonatype-nexus-snapshots</id>
+      <name>Sonatype Nexus Snapshots Repository</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
     </snapshotRepository>
     <site>
       <id>sourceforge</id>
-      <url>scp://shell.sourceforge.net/home/project-web/beezle/htdocs/application/site</url>
+      <url>scp://shell.sourceforge.net/home/project-web/beezle/htdocs/sushi/site</url>
     </site>
   </distributionManagement>
+
   <profiles>
     <profile>
-      <id>oneandone</id>
-      <distributionManagement>
-        <repository>
-          <id>1und1-releases</id>
-          <url>http://mavenrepo.united.domain:8081/nexus/content/repositories/1und1-stable</url>
-        </repository>
-        <snapshotRepository>
-          <id>1und1-snapshots</id>
-          <url>http://mavenrepo.united.domain:8081/nexus/content/repositories/1und1-snapshots</url>
-        </snapshotRepository>
-      </distributionManagement>
-    </profile>
-    <profile>
-      <id>all</id>
+      <id>release-sign-artifacts</id>
       <activation>
         <property>
-          <name>full</name>
+          <name>performRelease</name>
+          <value>true</value>
         </property>
       </activation>
       <build>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <excludes>
-                <exclude>**/*ManualTest.java</exclude>
-              </excludes>
-            </configuration>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.1</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
