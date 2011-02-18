@@ -18,8 +18,8 @@
 package com.oneandone.devel.maven.plugins.application;
 
 import org.apache.maven.plugin.AbstractMojo;
-import com.oneandone.sushi.fs.World;
-import com.oneandone.sushi.fs.Node;
+import net.sf.beezle.sushi.fs.World;
+import net.sf.beezle.sushi.fs.Node;
 
 /**
  */

@@ -5,9 +5,9 @@
   <name>Maven Application Plugin</name>
   <url>https://sourceforge.net/apps/trac/beezle/wiki/ApplicationHome</url>
 
-  <groupId>com.oneandone.maven.plugins</groupId>
+  <groupId>net.sf.beezle.maven.plugins</groupId>
   <artifactId>application</artifactId>
-  <version>1.2.2-SNAPSHOT</version>
+  <version>1.3.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <organization>
@@ -41,9 +41,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.oneandone.sushi</groupId>
+      <groupId>net.sf.beezle.sushi</groupId>
       <artifactId>sushi</artifactId>
-      <version>2.1.0</version>
+      <version>2.2.0</version>
     </dependency>
     <!-- we want distribution via ssh: -->
     <dependency>

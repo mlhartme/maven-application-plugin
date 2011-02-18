@@ -23,9 +23,9 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import com.oneandone.sushi.fs.World;
-import com.oneandone.sushi.fs.Node;
-import com.oneandone.sushi.util.Strings;
+import net.sf.beezle.sushi.fs.World;
+import net.sf.beezle.sushi.fs.Node;
+import net.sf.beezle.sushi.util.Strings;
 
 /**
  * Distributes application files.
