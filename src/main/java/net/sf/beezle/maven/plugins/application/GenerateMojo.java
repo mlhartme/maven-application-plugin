@@ -47,7 +47,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
- * Generates an application file.
+ * Generates an application file. Merges dependency jars into a single file, prepended with a launch shell script.
  *
  * @phase package
  * @goal generate
@@ -73,21 +73,21 @@ public class GenerateMojo extends BaseMojo {
     private String options;
 
     /**
-     * Jar file entries to be concatenated in merged jar. Comma-separated list of patterns.
+     * Dependency jar entries to be concatenated before adding them to the application file. Comma-separated list of patterns.
      *
      * @parameter expression=""
      */
     private String concat = "";
 
     /**
-     * Jar file entries to removed from merged jar. Comma-separated list of patterns.
+     * Dependency jar entries that will not be added to the application file. Comma-separated list of patterns.
      *
      * @parameter expression=""
      */
     private String remove = "";
 
     /**
-     * Jar file entries that may overlap; the last entry wins, it overwrites previous entries.
+     * Dependency jar file entries that may overlap: the last entry will be added to the application file.
      * Comma-separated list of patterns.
      *
      * @parameter expression=""
@@ -95,7 +95,7 @@ public class GenerateMojo extends BaseMojo {
     private String overwrite = "";
 
     /**
-     * Jar file entries that may be duplicates if they are equal. Comma-separated list of patterns.
+     * Dependency jar file entries that may be duplicates if they are equal. Comma-separated list of patterns.
      *
      * @parameter expression=""
      */
@@ -285,7 +285,7 @@ public class GenerateMojo extends BaseMojo {
         OutputStream dest;
 
         archive = Archive.createJar(world);
-        archive = loadDependencies(archive);
+        addDependencies(archive);
         if (!archive.data.join(main.replace('.', '/') + ".class").isFile()) {
             throw new MojoExecutionException("main class not found: " + main);
         }
@@ -295,7 +295,7 @@ public class GenerateMojo extends BaseMojo {
         dest.close();
     }
 
-    private Archive loadDependencies(Archive archive) throws IOException, MojoExecutionException {
+    private void addDependencies(Archive archive) throws IOException, MojoExecutionException {
         Document plexus;
         Sources sources;
         File file;
@@ -310,7 +310,7 @@ public class GenerateMojo extends BaseMojo {
             getLog().info("adding " + artifact);
             file = artifact.getFile();
             if (file == null) {
-                throw new RuntimeException("unresolved dependency: " +
+                throw new IllegalStateException("unresolved dependency: " +
                         artifact.getGroupId() + " " + artifact.getArtifactId() + "-" + artifact.getVersion() + ".jar");
             }
             jar = world.file(file);
@@ -327,7 +327,6 @@ public class GenerateMojo extends BaseMojo {
             throw new MojoExecutionException("duplicate files:\n" + sources.toString());
         }
         plexusSave(archive.data, plexus);
-        return archive;
     }
 
     private static final String ROOT = "component-set";
@@ -350,14 +349,16 @@ public class GenerateMojo extends BaseMojo {
                 if (destfile.exists()) {
                     if (srcfile.diff(destfile)) {
                         if (mayOverwrite.contains(srcfile)) {
-                            getLog().debug("overwrite " + relative);
+                            getLog().debug("overwrite different " + relative);
                             destfile.delete();
                             srcfile.copyFile(destfile);
                         } else {
                             duplicates.add(relative);
                         }
                     } else {
-                        if (mayEqual.contains(srcfile)) {
+                        if (mayOverwrite.contains(srcfile)) {
+                            getLog().debug("overwrite equal " + relative);
+                        } else if (mayEqual.contains(srcfile)) {
                             getLog().debug("equal " + relative);
                         } else {
                             duplicates.add(relative);
