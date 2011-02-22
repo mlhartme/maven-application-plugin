@@ -64,7 +64,7 @@ public class GenerateMojo extends BaseMojo {
     private String main;
 
     /**
-     * Fixed options passed to Java VM. You can use this to make local shell variables used in the launch 
+     * Fixed options passed to Java VM. You can use this to make local shell variables used in the launch
      * script available Java. E.g. use "-Dapp=$APP" to make the fully qualified application name
      * available as a system property "app".
      *
@@ -371,7 +371,17 @@ public class GenerateMojo extends BaseMojo {
     }
 
     private static List<String> split(String str) {
-        return Strings.trim(Strings.split(",", str));
+        List<String> result;
+        Iterator<String> iter;
+
+        result = Strings.trim(Strings.split(",", str));
+        iter = result.iterator();
+        while (iter.hasNext()) {
+            if (iter.next().isEmpty()) { // avoid "empty path" exception
+                iter.remove();
+            }
+        }
+        return result;
     }
 
     private List<Node> find(Node srcdir, String property) throws IOException {
