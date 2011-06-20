@@ -20,7 +20,11 @@ package net.sf.beezle.maven.plugins.application;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.jar.Attributes;
 
+import net.sf.beezle.sushi.metadata.xml.Loader;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -198,7 +203,33 @@ public class GenerateMojo extends BaseMojo {
         dir.mkdirsOpt();
         script();
         jar();
+        verify();
         projectHelper.attachArtifact(project, "sh", classifier, ((FileNode) getFile()).getFile());
+    }
+
+    private void verify() throws MojoExecutionException {
+        URL url;
+        URLClassLoader loader;
+        Class<?> clazz;
+
+        System.out.println("start verify()");
+        try {
+            url = ((FileNode) getFile()).getFile().toURI().toURL();
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException();
+        }
+        loader = new URLClassLoader(new URL[] { url });
+        try {
+            clazz = loader.loadClass(main);
+        } catch (ClassNotFoundException e) {
+            throw new MojoExecutionException("main class not found: " + main, e);
+        }
+        try {
+            clazz.getDeclaredMethod("main", String[].class);
+        } catch (NoSuchMethodException e) {
+            throw new MojoExecutionException("main class has no main(String[]) method: " + main, e);
+        }
+        System.out.println("end verify()");
     }
 
     private void script() throws IOException {
