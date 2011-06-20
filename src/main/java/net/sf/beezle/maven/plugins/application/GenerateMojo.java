@@ -307,7 +307,7 @@ public class GenerateMojo extends BaseMojo {
         sources = new Sources();
         duplicatePaths = new ArrayList<String>();
         for (Artifact artifact : getDependencies()) {
-            getLog().info("adding " + artifact);
+            getLog().info("adding " + artifact + " (" + ((artifact.getFile().length() + 512) / 1024) + " kb)");
             file = artifact.getFile();
             if (file == null) {
                 throw new IllegalStateException("unresolved dependency: " +
