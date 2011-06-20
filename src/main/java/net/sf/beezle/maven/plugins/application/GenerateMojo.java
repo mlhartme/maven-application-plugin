@@ -335,7 +335,7 @@ public class GenerateMojo extends BaseMojo {
     private static final String ROOT = "component-set";
     private static final String COMPONENTS = "components";
 
-    private void copy(Node srcdir, Node destdir, List<String> duplicates) throws IOException {
+    private void copy(Node srcdir, Node destdir, List<String> duplicates) throws IOException, MojoExecutionException {
         List<Node> mayEqual;
         List<Node> mayOverwrite;
         Node destfile;
@@ -374,21 +374,27 @@ public class GenerateMojo extends BaseMojo {
         }
     }
 
-    private static List<String> split(String str) {
+    private static List<String> split(String str) throws MojoExecutionException {
         List<String> result;
         Iterator<String> iter;
+        String item;
 
         result = Strings.trim(Strings.split(",", str));
         iter = result.iterator();
         while (iter.hasNext()) {
-            if (iter.next().isEmpty()) { // avoid "empty path" exception
+            item = iter.next();
+            if (item.isEmpty()) { // avoid "empty path" exception
                 iter.remove();
+            } else if (item.contains(" ")) {
+                throw new MojoExecutionException(
+                        "Invalid space character in configuration value " + str + "\n" +
+                        "Use commas to separate multiple entries.");
             }
         }
         return result;
     }
 
-    private List<Node> find(Node srcdir, String property) throws IOException {
+    private List<Node> find(Node srcdir, String property) throws IOException, MojoExecutionException {
         List<Node> mayOverwrite;
 
         mayOverwrite = new ArrayList<Node>();
@@ -398,7 +404,7 @@ public class GenerateMojo extends BaseMojo {
         return mayOverwrite;
     }
 
-    private void removeFiles(Node srcdir) throws IOException {
+    private void removeFiles(Node srcdir) throws IOException, MojoExecutionException {
         for (String path : split(remove)) {
             removeFiles(srcdir, path);
         }
@@ -415,7 +421,7 @@ public class GenerateMojo extends BaseMojo {
         }
     }
 
-    private void concat(Node srcdir, Node destdir) throws IOException {
+    private void concat(Node srcdir, Node destdir) throws IOException, MojoExecutionException {
         for (String path : split(concat)) {
             getLog().debug("concatenating " + path);
             concat(srcdir, destdir, path);
