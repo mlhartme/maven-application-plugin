@@ -295,6 +295,10 @@ public class GenerateMojo extends BaseMojo {
         dest.close();
     }
 
+    private static String gav(Artifact artifact) {
+        return artifact.getGroupId() + " " + artifact.getArtifactId() + "-" + artifact.getVersion();
+    }
+
     private void addDependencies(Archive archive) throws IOException, MojoExecutionException {
         Document plexus;
         Sources sources;
@@ -307,11 +311,10 @@ public class GenerateMojo extends BaseMojo {
         sources = new Sources();
         duplicatePaths = new ArrayList<String>();
         for (Artifact artifact : getDependencies()) {
-            getLog().info(Strings.lfill(6, "" + ((artifact.getFile().length() + 512) / 1024)) + " kb " + artifact);
+            getLog().info("+" + Strings.lfill(5, "" + ((artifact.getFile().length() + 512) / 1024)) + " kb " + gav(artifact));
             file = artifact.getFile();
             if (file == null) {
-                throw new IllegalStateException("unresolved dependency: " +
-                        artifact.getGroupId() + " " + artifact.getArtifactId() + "-" + artifact.getVersion() + ".jar");
+                throw new IllegalStateException("unresolved dependency: " + gav(artifact) + ".jar");
             }
             jar = world.file(file);
             add = Archive.loadJar(jar);
