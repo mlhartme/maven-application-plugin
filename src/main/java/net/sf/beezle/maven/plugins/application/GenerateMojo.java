@@ -192,7 +192,7 @@ public class GenerateMojo extends BaseMojo {
     }
 
     public void doExecute() throws IOException, MojoExecutionException {
-        getLog().info("generating application: " + getFile());
+        getLog().info("generating application " + getFile() + ":");
         validate(name);
         // do not wipe the directory because other plugins might already have copied stuff into it
         dir.mkdirsOpt();
@@ -307,7 +307,7 @@ public class GenerateMojo extends BaseMojo {
         sources = new Sources();
         duplicatePaths = new ArrayList<String>();
         for (Artifact artifact : getDependencies()) {
-            getLog().info("adding " + artifact + " (" + ((artifact.getFile().length() + 512) / 1024) + " kb)");
+            getLog().info(Strings.lfill(6, "" + ((artifact.getFile().length() + 512) / 1024)) + " kb " + artifact);
             file = artifact.getFile();
             if (file == null) {
                 throw new IllegalStateException("unresolved dependency: " +
@@ -457,7 +457,7 @@ public class GenerateMojo extends BaseMojo {
 
     private void plexusSave(Node root, Document plexus) throws IOException {
         if (plexus != null) {
-            getLog().info("merged plexus components");
+            getLog().debug("merged plexus components");
             plexusFile(root).writeXml(plexus);
         }
     }
