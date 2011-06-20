@@ -472,7 +472,7 @@ public class GenerateMojo extends BaseMojo {
             return plexus;
         }
         if (plexus == null) {
-            plexus = world.getXml().builder.createDocument(ROOT);
+            plexus = world.getXml().getBuilder().createDocument(ROOT);
             components = Builder.element(plexus.getDocumentElement(), COMPONENTS);
         } else {
             components = (Element) plexus.getDocumentElement().getFirstChild();
