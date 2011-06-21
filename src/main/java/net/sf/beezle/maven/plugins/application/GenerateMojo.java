@@ -212,7 +212,6 @@ public class GenerateMojo extends BaseMojo {
         URLClassLoader loader;
         Class<?> clazz;
 
-        System.out.println("start verify()");
         try {
             url = ((FileNode) getFile()).getFile().toURI().toURL();
         } catch (MalformedURLException e) {
@@ -229,7 +228,6 @@ public class GenerateMojo extends BaseMojo {
         } catch (NoSuchMethodException e) {
             throw new MojoExecutionException("main class has no main(String[]) method: " + main, e);
         }
-        System.out.println("end verify()");
     }
 
     private void script() throws IOException {
