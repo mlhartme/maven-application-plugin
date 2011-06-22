@@ -17,26 +17,29 @@
 
 package net.sf.beezle.maven.plugins.application;
 
+import net.sf.beezle.sushi.fs.file.FileNode;
 import org.apache.maven.plugin.AbstractMojo;
 import net.sf.beezle.sushi.fs.World;
 import net.sf.beezle.sushi.fs.Node;
+
+import java.io.File;
 
 /**
  */
 public abstract class BaseMojo extends AbstractMojo {
     protected final World world;
-    
+
     /**
-     * Directory where to place the Launch Script and the executable Jar file. 
+     * Directory where to place the Launch Script and the executable Jar file.
      * Usually, there's no need to change the default value, which is target.
      *
      * @parameter expression="${project.build.directory}"
      */
-    protected Node dir;
-    
+    protected FileNode dir;
+
     /**
      * Name for the generated application, without extension.
-     * 
+     *
      * @parameter expression="${project.artifactId}"
      */
     protected String name;
@@ -56,8 +59,8 @@ public abstract class BaseMojo extends AbstractMojo {
     public Node getDir() {
         return dir;
     }
-    
-    public Node getFile() {
+
+    public FileNode getFile() {
         return dir.join(name);
     }
 }

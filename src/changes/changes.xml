@@ -6,6 +6,9 @@
       <action dev="mlhartme" type="fix">
         Remove println in verify method().
       </action>
+      <action dev="mlhartme" type="update">
+        Print size of the generated application.
+      </action>
     </release>
     <release version="1.3.2" date="2011-06-20">
       <action dev="mlhartme" type="update">

@@ -177,7 +177,7 @@ public class GenerateMojo extends BaseMojo {
         this(new World(), null, null, null, null, null, null);
     }
 
-    public GenerateMojo(World world, String name, Node dir, String main, String classifier, String java, String path) {
+    public GenerateMojo(World world, String name, FileNode dir, String main, String classifier, String java, String path) {
         super(world);
         this.name = name;
         this.dir = dir;
@@ -197,14 +197,14 @@ public class GenerateMojo extends BaseMojo {
     }
 
     public void doExecute() throws IOException, MojoExecutionException {
-        getLog().info("generating application " + getFile() + ":");
         validate(name);
         // do not wipe the directory because other plugins might already have copied stuff into it
         dir.mkdirsOpt();
         script();
         jar();
+        getLog().info(">" + size(getFile().getFile()) + getFile());
         verify();
-        projectHelper.attachArtifact(project, "sh", classifier, ((FileNode) getFile()).getFile());
+        projectHelper.attachArtifact(project, "sh", classifier, getFile().getFile());
     }
 
     private void verify() throws MojoExecutionException {
@@ -213,7 +213,7 @@ public class GenerateMojo extends BaseMojo {
         Class<?> clazz;
 
         try {
-            url = ((FileNode) getFile()).getFile().toURI().toURL();
+            url = getFile().getFile().toURI().toURL();
         } catch (MalformedURLException e) {
             throw new IllegalStateException();
         }
@@ -328,6 +328,10 @@ public class GenerateMojo extends BaseMojo {
         return artifact.getGroupId() + " " + artifact.getArtifactId() + "-" + artifact.getVersion();
     }
 
+    private static String size(File file) {
+        return Strings.lfill(5, "" + ((file.length() + 512) / 1024)) + " kb ";
+    }
+
     private void addDependencies(Archive archive) throws IOException, MojoExecutionException {
         Document plexus;
         Sources sources;
@@ -340,7 +344,7 @@ public class GenerateMojo extends BaseMojo {
         sources = new Sources();
         duplicatePaths = new ArrayList<String>();
         for (Artifact artifact : getDependencies()) {
-            getLog().info("+" + Strings.lfill(5, "" + ((artifact.getFile().length() + 512) / 1024)) + " kb " + gav(artifact));
+            getLog().info("+" + size(artifact.getFile()) + gav(artifact));
             file = artifact.getFile();
             if (file == null) {
                 throw new IllegalStateException("unresolved dependency: " + gav(artifact) + ".jar");
