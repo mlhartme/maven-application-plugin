@@ -325,7 +325,7 @@ public class GenerateMojo extends BaseMojo {
     }
 
     private static String gav(Artifact artifact) {
-        return artifact.getGroupId() + " " + artifact.getArtifactId() + "-" + artifact.getVersion();
+        return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
     }
 
     private static String size(File file) {
