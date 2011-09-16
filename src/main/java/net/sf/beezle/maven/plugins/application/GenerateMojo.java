@@ -116,14 +116,15 @@ public class GenerateMojo extends BaseMojo {
     private String classifier = "";
 
     /**
-     * Name of the Java Executable to be invoked by the script.
+     * Name of the Java Executable to be invoked by the script. Only a file name, without path.
      *
      * @parameter default-value="java";
      */
     private String java = "";
 
     /**
-     * Path to search the Java Executable.
+     * Path to search the Java Executable. Defaults to the default search path. Change this variable to specify a different location
+     * to search for java.
      *
      * @parameter default-value="$PATH";
      */
