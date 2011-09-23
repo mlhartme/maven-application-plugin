@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.jar.Attributes;
 
+import com.sun.org.apache.regexp.internal.CharacterArrayCharacterIterator;
 import net.sf.beezle.sushi.metadata.xml.Loader;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -307,7 +308,21 @@ public class GenerateMojo extends BaseMojo {
     }
 
     public String getOptsVar() {
-        return name.toUpperCase().replace('-', '_') + "_OPTS";
+        String suffix = "_OPTS";
+        StringBuilder builder;
+        char c;
+
+        builder = new StringBuilder(name.length() + suffix.length());
+        for (int i = 0; i < name.length(); i++) {
+            c = name.charAt(i);
+            if (Character.isLetter(c) || (i > 0 && Character.isDigit(c))) {
+                builder.append(Character.toUpperCase(c));
+            } else {
+                builder.append('_');
+            }
+        }
+        builder.append(suffix);
+        return builder.toString();
     }
 
     public void jar() throws IOException, MojoExecutionException {

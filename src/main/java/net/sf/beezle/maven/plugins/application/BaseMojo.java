@@ -38,7 +38,7 @@ public abstract class BaseMojo extends AbstractMojo {
     protected FileNode dir;
 
     /**
-     * Name for the generated application, without extension.
+     * Name for the generated application file.
      *
      * @parameter expression="${project.artifactId}"
      */
