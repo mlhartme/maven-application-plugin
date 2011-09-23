@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import net.sf.beezle.sushi.util.Separator;
 import org.apache.maven.plugin.MojoExecutionException;
 import net.sf.beezle.sushi.fs.World;
 import net.sf.beezle.sushi.fs.Node;
@@ -29,25 +30,25 @@ import net.sf.beezle.sushi.util.Strings;
 
 /**
  * Distributes application files.
- * 
+ *
  * @goal distribute
  */
 public class DistributeMojo extends BaseMojo {
     /**
      * Comma separated list of targets. E.g. ssh://root@pumama.schlund.de/home/clustercontrol/launcher
-     * 
+     *
      * @parameter
      * @required
      */
     private String distribute;
-    
+
     /**
      * Base name for backup file. If not specified, no backup will be created
-     *  
+     *
      * @parameter
      */
     private String backup;
-    
+
     /**
      * Pattern to search root directory of the respective distribute node for lock files.
      * Distribution is aborted if the pattern matches one or more files.
@@ -55,7 +56,7 @@ public class DistributeMojo extends BaseMojo {
      * @parameter
      */
     private String lockfile;
-    
+
     public DistributeMojo() {
         this(new World());
     }
@@ -71,20 +72,20 @@ public class DistributeMojo extends BaseMojo {
             throw new MojoExecutionException("cannot distribute application: " + e.getMessage(), e);
         }
     }
-    
+
     public void doExecute() throws IOException, MojoExecutionException {
         URI uri;
 
-        for (String machine : Strings.split(",", distribute)) {
+        for (String machine : Separator.COMMA.split(distribute)) {
             try {
-                uri = new URI(machine.trim());
+                uri = new URI(machine);
             } catch (URISyntaxException e) {
                 throw new MojoExecutionException("invalid distribution target: " + machine.trim(), e);
             }
             deploy(world.node(uri));
         }
     }
-    
+
     private void deploy(Node dest) throws IOException {
         List<Node> lst;
 
@@ -106,7 +107,7 @@ public class DistributeMojo extends BaseMojo {
         dest.deleteOpt();
         src.move(dest);
     }
-    
+
     private void copy(Node src, Node dest) throws IOException {
         getLog().info("  copy " + src.getURI() + " " + dest.getURI());
         src.copyFile(dest);

@@ -36,6 +36,7 @@ import java.util.jar.Attributes;
 
 import com.sun.org.apache.regexp.internal.CharacterArrayCharacterIterator;
 import net.sf.beezle.sushi.metadata.xml.Loader;
+import net.sf.beezle.sushi.util.Separator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -345,7 +346,7 @@ public class GenerateMojo extends BaseMojo {
     }
 
     private static String size(File file) {
-        return Strings.lfill(5, "" + ((file.length() + 512) / 1024)) + " kb ";
+        return Strings.padLeft("" + ((file.length() + 512) / 1024), 5) + " kb ";
     }
 
     private void addDependencies(Archive archive) throws IOException, MojoExecutionException {
@@ -425,16 +426,10 @@ public class GenerateMojo extends BaseMojo {
 
     private static List<String> split(String str) throws MojoExecutionException {
         List<String> result;
-        Iterator<String> iter;
-        String item;
 
-        result = Strings.trim(Strings.split(",", str));
-        iter = result.iterator();
-        while (iter.hasNext()) {
-            item = iter.next();
-            if (item.isEmpty()) { // avoid "empty path" exception
-                iter.remove();
-            } else if (item.contains(" ")) {
+        result = Separator.COMMA.split(str);
+        for (String item : result) {
+            if (item.contains(" ")) {
                 throw new MojoExecutionException(
                         "Invalid space character in configuration value " + str + "\n" +
                         "Use commas to separate multiple entries.");
@@ -496,7 +491,7 @@ public class GenerateMojo extends BaseMojo {
             dest.getParent().mkdirsOpt();
             dest.writeString("");
         }
-        lf = srcdir.getWorld().os.lineSeparator;
+        lf = srcdir.getWorld().os.lineSeparator.getSeparator();
         builder = new StringBuilder();
         builder.append(src.readString());
         idx = builder.lastIndexOf(lf);
