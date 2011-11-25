@@ -570,11 +570,14 @@ public class GenerateMojo extends BaseMojo {
     }
 
     public static String getUserEmail() {
-        // TODO: email address ...
+        String hostname;
+
         try {
-            return System.getProperty("user.name") + "@" + InetAddress.getLocalHost().getHostName();
+            hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
+            // this happens if your hostname is not in /etc/hosts and not resolvable via dns.
+            hostname = "unknown";
         }
+        return System.getProperty("user.name") + "@" + hostname;
     }
 }
