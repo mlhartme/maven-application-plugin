@@ -542,7 +542,7 @@ public class GenerateMojo extends BaseMojo {
             if (e.getTagName().equals(COMPONENTS)) {
                 Builder.add(components, e.getChildNodes());
             } else {
-                throw new IOException("unkown element: " + e.getTagName());
+                throw new IOException("unknown element: " + e.getTagName());
             }
         }
         file.delete();
@@ -565,7 +565,7 @@ public class GenerateMojo extends BaseMojo {
         if (project.getOrganization() != null) {
             return project.getOrganization().getName();
         } else {
-            return "unkown organization";
+            return "unknown organization";
         }
     }
 
