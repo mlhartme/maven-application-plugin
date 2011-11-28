@@ -17,7 +17,7 @@
 
   <groupId>net.sf.beezle.maven.plugins</groupId>
   <artifactId>application</artifactId>
-  <version>1.3.5</version>
+  <version>1.3.6-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <licenses>
@@ -29,9 +29,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:https://beezle.svn.sourceforge.net/svnroot/beezle/application/tags/application-1.3.5</connection>
-    <developerConnection>scm:svn:https://beezle.svn.sourceforge.net/svnroot/beezle/application/tags/application-1.3.5</developerConnection>
-    <url>http://beezle.svn.sourceforge.net/viewvc/beezle/application/tags/application-1.3.5</url>
+    <connection>scm:svn:https://beezle.svn.sourceforge.net/svnroot/beezle/application/trunk</connection>
+    <developerConnection>scm:svn:https://beezle.svn.sourceforge.net/svnroot/beezle/application/trunk</developerConnection>
+    <url>http://beezle.svn.sourceforge.net/viewvc/beezle/application/trunk</url>
   </scm>
 
   <dependencies>
