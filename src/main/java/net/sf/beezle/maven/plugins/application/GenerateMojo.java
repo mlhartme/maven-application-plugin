@@ -243,12 +243,12 @@ public class GenerateMojo extends BaseMojo {
                 // resolve symlinks
                 "APP=\"$0\"",
                 "while [ -h \"$APP\" ] ; do",
-                "  ls=`ls -ld \"$APP\"`",
-                "  link=`expr \"$ls\" : '.*-> \\(.*\\)$'`",
+                "  ls=$(ls -ld \"$APP\")",
+                "  link=$(expr \"$ls\" : '.*-> \\(.*\\)$')",
                 "  if expr \"$link\" : '/.*' > /dev/null; then",
                 "    APP=\"$link\"",
                 "  else",
-                "    APP=`dirname \"$APP\"`\"/$link\"",
+                "    APP=$(dirname \"$APP\")\"/$link\"",
                 "  fi",
                 "done",
                 // will be overridden with the configured name
