@@ -73,7 +73,8 @@ public class GenerateMojo extends BaseMojo {
     /**
      * Fixed options passed to Java VM. You can use this to make local shell variables used in the launch
      * script available Java. E.g. use "-Dapp=$APP" to make the fully qualified application name
-     * available as a system property "app".
+     * available as a system property "app". Another example: use "-Dapporig=$0" to get the original name
+     * this application was invoked with.
      *
      * @parameter expression=""
      */
