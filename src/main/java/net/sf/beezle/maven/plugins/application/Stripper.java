@@ -23,10 +23,7 @@ public class Stripper {
         stripper.closure(m);
         for (Node cf : archive.data.find("**/*.class")) {
             if (!stripper.referenced(cf.getRelative(archive.data))) {
-                System.out.println("strip " + cf);
                 cf.delete();
-            } else {
-                System.out.println("keep " + cf);
             }
         }
     }
@@ -60,7 +57,7 @@ public class Stripper {
             refs = new ArrayList<Reference>();
             code = m.getCode();
             if (code == null) {
-                System.out.println("TODO: abstract: " + m);
+                // TODO: abstract
             } else {
                 code.references(refs);
                 for (Reference ref : refs) {
@@ -74,6 +71,9 @@ public class Stripper {
                                 }
                             }
                         } catch (ResolveException e) {
+                            if (ref.getOwner().name.equals("java.lang.Class") && ((MethodRef) ref).name.equals("forName")) {
+                                System.out.println(m + " uses " + ref);
+                            }
                             if (!ref.getOwner().name.startsWith("java.")) {
                                 System.out.println("not found: " + ref);
                             }
