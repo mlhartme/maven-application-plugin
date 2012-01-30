@@ -132,6 +132,13 @@ public class GenerateMojo extends BaseMojo {
     private String path = "";
 
     /**
+     * True to remove unused classes from that application file.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean strip;
+
+    /**
      * Copied verbatim to the launch code right before the final Java call,
      * placing each extension on a new line.
      * You have access to the following script variables:
@@ -335,6 +342,9 @@ public class GenerateMojo extends BaseMojo {
             throw new MojoExecutionException("main class not found: " + main);
         }
         mainAttributes(archive.manifest.getMainAttributes());
+        if (strip) {
+            Stripper.run(archive, main);
+        }
         dest = getFile().createAppendStream();
         archive.save(dest);
         dest.close();
