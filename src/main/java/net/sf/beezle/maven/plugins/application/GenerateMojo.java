@@ -34,8 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.jar.Attributes;
 
-import com.sun.org.apache.regexp.internal.CharacterArrayCharacterIterator;
-import net.sf.beezle.sushi.metadata.xml.Loader;
 import net.sf.beezle.sushi.util.Separator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
