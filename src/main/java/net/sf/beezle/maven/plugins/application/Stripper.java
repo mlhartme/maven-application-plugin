@@ -29,31 +29,38 @@ public class Stripper {
     }
 
     private final Repository repository;
+    private final List<MethodRef> methods;
     private final List<ClassRef> classes;
 
     public Stripper(Repository repository) {
         this.repository = repository;
+        this.methods = new ArrayList<MethodRef>();
         this.classes = new ArrayList<ClassRef>();
+        
     }
 
     public void closure(MethodRef root) {
-        List<MethodDef> todo;
+        MethodRef mr;
         MethodDef m;
         List<Reference> refs;
         MethodDef next;
         Code code;
 
-        todo = new ArrayList<MethodDef>();
-        try {
-            todo.add((MethodDef) root.resolve(repository));
-        } catch (ResolveException e) {
-            throw new IllegalStateException(root.toString());
-        }
-        classes.add(root.getOwner());
-
+        add(root);
         // size grows!
-        for (int i = 0; i < todo.size(); i++) {
-            m = todo.get(i);
+        for (int i = 0; i < methods.size(); i++) {
+            mr = methods.get(i);
+            try {
+                m = (MethodDef) mr.resolve(repository);
+            } catch (ResolveException e) {
+                if (mr.getOwner().name.equals("java.lang.Class") && mr.name.equals("forName")) {
+                    System.out.println(mr.toString());
+                }
+                if (!mr.getOwner().name.startsWith("java.")) {
+                    System.out.println("not found: " + mr);
+                }
+                continue;
+            }
             refs = new ArrayList<Reference>();
             code = m.getCode();
             if (code == null) {
@@ -62,25 +69,25 @@ public class Stripper {
                 code.references(refs);
                 for (Reference ref : refs) {
                     if (ref instanceof MethodRef) {
-                        try {
-                            next = (MethodDef) ref.resolve(repository);
-                            if (!todo.contains(next)) {
-                                todo.add(next);
-                                if (!classes.contains(ref.getOwner())) {
-                                    classes.add(ref.getOwner());
-                                }
-                            }
-                        } catch (ResolveException e) {
-                            if (ref.getOwner().name.equals("java.lang.Class") && ((MethodRef) ref).name.equals("forName")) {
-                                System.out.println(m + " uses " + ref);
-                            }
-                            if (!ref.getOwner().name.startsWith("java.")) {
-                                System.out.println("not found: " + ref);
-                            }
-                        }
+                        add((MethodRef) ref);
+                    } else {
+                        // TODO
                     }
                 }
             }
+        }
+    }
+    
+    public void add(MethodRef method) {
+        if (!methods.contains(method)) {
+            methods.add(method);
+            add(method.getOwner());
+        }
+    }
+
+    public void add(ClassRef clazz) {
+        if (!classes.contains(clazz)) {
+            classes.add(clazz);
         }
     }
 
