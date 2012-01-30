@@ -54,7 +54,7 @@ public class Stripper {
                 m = (MethodDef) mr.resolve(repository);
             } catch (ResolveException e) {
                 if (mr.getOwner().name.equals("java.lang.Class") && mr.name.equals("forName")) {
-                    System.out.println(mr.toString());
+                    System.out.println("CAUTION: " + mr);
                 }
                 if (!mr.getOwner().name.startsWith("java.")) {
                     System.out.println("not found: " + mr);
