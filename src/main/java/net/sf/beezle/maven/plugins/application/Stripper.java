@@ -72,6 +72,9 @@ public class Stripper {
         // size grows!
         for (int i = 0; i < methods.size(); i++) {
             mr = methods.get(i);
+            if (mr.getOwner().name.startsWith("java.lang.reflect.")) {
+                System.out.println("CAUTION: " + mr);
+            }
             if (mr.getOwner().name.equals("java.lang.Class") && mr.name.equals("forName")) {
                 System.out.println("CAUTION: " + mr);
             }
