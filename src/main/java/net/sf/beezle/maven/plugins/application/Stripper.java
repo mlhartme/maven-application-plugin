@@ -86,8 +86,18 @@ public class Stripper {
     }
 
     public void add(ClassRef clazz) {
+        MethodRef ref;
+
         if (!classes.contains(clazz)) {
             classes.add(clazz);
+            ref = new MethodRef(clazz, false, ClassRef.VOID, "<clinit>");
+            try {
+                ref.resolve(repository);
+                add(ref);
+            } catch (ResolveException e) {
+                // no static initializer
+                return;
+            }
         }
     }
 
