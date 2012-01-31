@@ -18,6 +18,8 @@ public class Stripper {
 
         repository = new Repository();
         repository.addAllLazy(archive.data);
+        // TODO: Java classes outside of runtime.jar ...
+        repository.addAllLazy(archive.data.getWorld().locateClasspathItem(Object.class));
         m = new MethodRef(new ClassRef(main), false, ClassRef.VOID, "main", new ClassRef[] { new ClassRef(String[].class) });
         stripper = new Stripper(repository);
         stripper.closure(m);
@@ -94,7 +96,6 @@ public class Stripper {
         List<MethodRef> result;
         ClassRef baseClass;
         ClassDef derivedClass;
-        int i;
 
         result = new ArrayList<MethodRef>();
         baseClass = baseMethod.getOwner();
@@ -130,7 +131,9 @@ public class Stripper {
                 return;
             }
             classes.add(clazz);
-            add(def.superClass);
+            if (def.superClass != null) {
+                add(def.superClass);
+            }
             clinit = def.lookupMethod("<clinit>");
             if (clinit != null) {
                 add(new MethodRef(clazz, false, ClassRef.VOID, clinit.name));
