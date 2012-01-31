@@ -127,6 +127,7 @@ public class Stripper {
                 add(arg);
             }
             add(method.returnType);
+            // I've tested this: java loads exceptions declared via throws, even if they're never thrown!
             addExceptions(method);
             for (MethodRef derived : derived(method)) {
                 add(derived);
