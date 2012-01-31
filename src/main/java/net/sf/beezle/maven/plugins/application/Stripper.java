@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/** See also: http://java.sun.com/docs/books/jvms/second_edition/html/Concepts.doc.html#16491 */
 public class Stripper {
     public static void run(Archive archive, String main) throws IOException {
         Repository repository;
@@ -73,6 +74,14 @@ public class Stripper {
                 for (Reference ref : refs) {
                     if (ref instanceof MethodRef) {
                         add((MethodRef) ref);
+                    } else if (ref instanceof FieldRef) {
+                        // 2.17.4 (initialization) and 2.17.6 (creation of new instances)
+                        try {
+                            FieldDef field = (FieldDef) ref.resolve(repository);
+                            add(field.type);
+                        } catch (ResolveException e) {
+                            // TODO
+                        }
                     } else {
                         // TODO
                     }

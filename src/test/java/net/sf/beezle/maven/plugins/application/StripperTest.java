@@ -3,6 +3,7 @@ package net.sf.beezle.maven.plugins.application;
 import net.sf.beezle.maven.plugins.application.data.BaseConstructor;
 import net.sf.beezle.maven.plugins.application.data.BaseMethod;
 import net.sf.beezle.maven.plugins.application.data.Empty;
+import net.sf.beezle.maven.plugins.application.data.Field;
 import net.sf.beezle.maven.plugins.application.data.Ifc;
 import net.sf.beezle.maven.plugins.application.data.Impl;
 import net.sf.beezle.maven.plugins.application.data.Impl2;
@@ -68,6 +69,16 @@ public class StripperTest {
     @Test
     public void ifc() throws Exception {
         expected(check(Impl.class, "run"), Impl.class, Ifc.class, Impl2.class, Used.class, Used2.class);
+    }
+
+    @Test
+    public void fieldNormal() throws Exception {
+        expected(check(Field.class, "useNormal"), Field.class, Used2.class);
+    }
+
+    @Test
+    public void fieldStatic() throws Exception {
+        expected(check(Field.class, "useStatic"), Field.class, Used.class);
     }
 
     //--
