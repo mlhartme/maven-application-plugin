@@ -30,13 +30,13 @@ public class Stripper {
 
     private final Repository repository;
     private final List<MethodRef> methods;
-    private final List<ClassRef> classes;
+    public final List<ClassRef> classes;
 
     public Stripper(Repository repository) {
         this.repository = repository;
         this.methods = new ArrayList<MethodRef>();
         this.classes = new ArrayList<ClassRef>();
-        
+
     }
 
     public void closure(MethodRef root) {
@@ -77,7 +77,7 @@ public class Stripper {
             }
         }
     }
-    
+
     public void add(MethodRef method) {
         if (!methods.contains(method)) {
             methods.add(method);
@@ -93,9 +93,13 @@ public class Stripper {
 
     public boolean referenced(String resourceName) {
         String name;
-        
+
         name = Strings.removeRight(resourceName, ".class");
         name = name.replace('/', '.');
         return classes.contains(new ClassRef(name));
+    }
+
+    public int size() {
+        return classes.size();
     }
 }
