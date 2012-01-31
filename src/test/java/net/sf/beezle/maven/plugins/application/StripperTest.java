@@ -3,6 +3,8 @@ package net.sf.beezle.maven.plugins.application;
 import net.sf.beezle.maven.plugins.application.data.BaseConstructor;
 import net.sf.beezle.maven.plugins.application.data.BaseMethod;
 import net.sf.beezle.maven.plugins.application.data.Empty;
+import net.sf.beezle.maven.plugins.application.data.Ifc;
+import net.sf.beezle.maven.plugins.application.data.Impl;
 import net.sf.beezle.maven.plugins.application.data.InheritedConstructor;
 import net.sf.beezle.maven.plugins.application.data.InheritedMethod;
 import net.sf.beezle.maven.plugins.application.data.InheritedStaticInit;
@@ -59,6 +61,12 @@ public class StripperTest {
     @Test
     public void inheritedMethod() throws Exception {
         expected(check(InheritedMethod.class, "root"), InheritedMethod.class, BaseMethod.class, Used.class);
+    }
+
+    @Test
+    public void ifc() throws Exception {
+        expected(check(Impl.class, "methodAdd"), Impl.class, Ifc.class, Used.class);
+        expected(check(Impl.class, "classAdd"), Impl.class, Ifc.class, Used.class);
     }
 
     //--

@@ -83,7 +83,48 @@ public class Stripper {
         if (!methods.contains(method)) {
             methods.add(method);
             add(method.getOwner());
+            for (MethodRef derived : derived(method)) {
+                add(derived);
+            }
         }
+    }
+
+    /** @return methodRefs to already visited classes that directly override baseMethod */
+    public List<MethodRef> derived(MethodRef baseMethod) {
+        List<MethodRef> result;
+        ClassRef baseClass;
+        ClassDef derivedClass;
+        int i;
+
+        result = new ArrayList<MethodRef>();
+        baseClass = baseMethod.getOwner();
+        for (ClassRef c : classes) {
+            try {
+                derivedClass = (ClassDef) c.resolve(repository);
+            } catch (ResolveException e) {
+                // TODO
+                continue;
+            }
+            if (baseClass.equals(derivedClass.superClass) || derivedClass.interfaces.contains(baseClass)) {
+                for (MethodDef derivedMethod : derivedClass.methods) {
+                    if (baseMethod.name.equals(derivedMethod.name)) {
+                        if (baseMethod.argumentTypes.length == derivedMethod.argumentTypes.length) {
+                            // the return type is not checked - it doesn't matter!
+
+                            for (i = 0; i < baseMethod.argumentTypes.length; i++) {
+                                if (!baseMethod.argumentTypes[i].equals(derivedMethod.argumentTypes[i])) {
+                                    break;
+                                }
+                            }
+                            if (i == baseMethod.argumentTypes.length) {
+                                result.add(derivedMethod.reference(c, derivedClass.accessFlags.contains(Access.INTERFACE)));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     public void add(ClassRef clazz) {
