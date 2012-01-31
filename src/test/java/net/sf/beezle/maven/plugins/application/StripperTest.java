@@ -5,12 +5,14 @@ import net.sf.beezle.maven.plugins.application.data.BaseMethod;
 import net.sf.beezle.maven.plugins.application.data.Empty;
 import net.sf.beezle.maven.plugins.application.data.Ifc;
 import net.sf.beezle.maven.plugins.application.data.Impl;
+import net.sf.beezle.maven.plugins.application.data.Impl2;
 import net.sf.beezle.maven.plugins.application.data.InheritedConstructor;
 import net.sf.beezle.maven.plugins.application.data.InheritedMethod;
 import net.sf.beezle.maven.plugins.application.data.InheritedStaticInit;
 import net.sf.beezle.maven.plugins.application.data.Normal;
 import net.sf.beezle.maven.plugins.application.data.StaticInit;
 import net.sf.beezle.maven.plugins.application.data.Used;
+import net.sf.beezle.maven.plugins.application.data.Used2;
 import net.sf.beezle.mork.classfile.ClassRef;
 import net.sf.beezle.mork.classfile.MethodRef;
 import net.sf.beezle.mork.classfile.Repository;
@@ -65,8 +67,7 @@ public class StripperTest {
 
     @Test
     public void ifc() throws Exception {
-        expected(check(Impl.class, "methodAdd"), Impl.class, Ifc.class, Used.class);
-        expected(check(Impl.class, "classAdd"), Impl.class, Ifc.class, Used.class);
+        expected(check(Impl.class, "run"), Impl.class, Ifc.class, Impl2.class, Used.class, Used2.class);
     }
 
     //--

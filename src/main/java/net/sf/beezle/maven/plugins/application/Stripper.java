@@ -107,19 +107,8 @@ public class Stripper {
             }
             if (baseClass.equals(derivedClass.superClass) || derivedClass.interfaces.contains(baseClass)) {
                 for (MethodDef derivedMethod : derivedClass.methods) {
-                    if (baseMethod.name.equals(derivedMethod.name)) {
-                        if (baseMethod.argumentTypes.length == derivedMethod.argumentTypes.length) {
-                            // the return type is not checked - it doesn't matter!
-
-                            for (i = 0; i < baseMethod.argumentTypes.length; i++) {
-                                if (!baseMethod.argumentTypes[i].equals(derivedMethod.argumentTypes[i])) {
-                                    break;
-                                }
-                            }
-                            if (i == baseMethod.argumentTypes.length) {
-                                result.add(derivedMethod.reference(c, derivedClass.accessFlags.contains(Access.INTERFACE)));
-                            }
-                        }
+                    if (sameSignature(baseMethod, derivedMethod)) {
+                        result.add(derivedMethod.reference(c, derivedClass.accessFlags.contains(Access.INTERFACE)));
                     }
                 }
             }
@@ -129,7 +118,8 @@ public class Stripper {
 
     public void add(ClassRef clazz) {
         ClassDef def;
-        MethodDef method;
+        MethodDef clinit;
+        MethodRef derived;
 
         if (!classes.contains(clazz)) {
             try {
@@ -141,11 +131,58 @@ public class Stripper {
             }
             classes.add(clazz);
             add(def.superClass);
-            method = def.lookupMethod("<clinit>");
-            if (method != null) {
-                add(new MethodRef(clazz, false, ClassRef.VOID, method.name));
+            clinit = def.lookupMethod("<clinit>");
+            if (clinit != null) {
+                add(new MethodRef(clazz, false, ClassRef.VOID, clinit.name));
+            }
+            for (MethodDef method : def.methods) {
+                derived = method.reference(clazz, def.accessFlags.contains(Access.INTERFACE));
+                for (MethodRef base : new ArrayList<MethodRef>(methods)) { // TODO: copy ...
+                    if (overrides(base, def, derived)) {
+                        add(derived);
+                    }
+                }
             }
         }
+    }
+
+    private boolean overrides(MethodRef base, ClassDef derivedClass, MethodRef derivedMethod) {
+        if (base.getOwner().equals(derivedClass.superClass) || derivedClass.interfaces.contains(base.getOwner())) {
+            return sameSignature(base, derivedMethod);
+        }
+        return false;
+    }
+
+    private boolean sameSignature(MethodRef left, MethodRef right) {
+        if (left.argumentTypes.length == right.argumentTypes.length) {
+            if (left.name.equals(right.name)) {
+                // the return type is not checked - it doesn't matter!
+
+                for (int i = 0; i < left.argumentTypes.length; i++) {
+                    if (!left.argumentTypes[i].equals(right.argumentTypes[i])) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean sameSignature(MethodRef left, MethodDef right) {
+        if (left.argumentTypes.length == right.argumentTypes.length) {
+            if (left.name.equals(right.name)) {
+                // the return type is not checked - it doesn't matter!
+
+                for (int i = 0; i < left.argumentTypes.length; i++) {
+                    if (!left.argumentTypes[i].equals(right.argumentTypes[i])) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean referenced(String resourceName) {
