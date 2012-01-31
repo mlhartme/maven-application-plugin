@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.jar.Attributes;
 
+import com.google.common.base.Splitter;
 import net.sf.beezle.sushi.util.Separator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -137,6 +138,11 @@ public class GenerateMojo extends BaseMojo {
      * @parameter default-value="false"
      */
     private boolean strip;
+
+    /**
+     * @parameter default-value=""
+     */
+    private String dynamicReferences = "";
 
     /**
      * Copied verbatim to the launch code right before the final Java call,
@@ -343,7 +349,7 @@ public class GenerateMojo extends BaseMojo {
         }
         mainAttributes(archive.manifest.getMainAttributes());
         if (strip) {
-            Stripper.run(archive, main);
+            Stripper.run(archive, main, Separator.COMMA.split(dynamicReferences));
         }
         dest = getFile().createAppendStream();
         archive.save(dest);

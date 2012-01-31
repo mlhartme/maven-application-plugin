@@ -11,7 +11,7 @@ import java.util.List;
 
 /** See also: http://java.sun.com/docs/books/jvms/second_edition/html/Concepts.doc.html#16491 */
 public class Stripper {
-    public static void run(Archive archive, String main) throws IOException {
+    public static void run(Archive archive, String main, List<String> dynamitcReferences) throws IOException {
         Repository repository;
         ClassDef c;
         MethodRef m;
@@ -23,6 +23,24 @@ public class Stripper {
         repository.addAllLazy(archive.data.getWorld().locateClasspathItem(Object.class));
         m = new MethodRef(new ClassRef(main), false, ClassRef.VOID, "main", new ClassRef[] { new ClassRef(String[].class) });
         stripper = new Stripper(repository);
+        for (String dynamic : dynamitcReferences) {
+            int idx;
+            ClassRef ref;
+            ClassDef def;
+
+            idx = dynamic.lastIndexOf('.');
+            ref = new ClassRef(dynamic.substring(0, idx));
+            try {
+                def = (ClassDef) ref.resolve(repository);
+            } catch (ResolveException e) {
+                throw new IllegalArgumentException();
+            }
+            for (MethodDef method : def.methods) {
+                if (method.name.equals(dynamic.substring(idx + 1))) {
+                    stripper.add(method.reference(ref, false));
+                }
+            }
+        }
         stripper.closure(m);
         for (Node cf : archive.data.find("**/*.class")) {
             if (!stripper.referenced(cf.getRelative(archive.data))) {
@@ -54,21 +72,25 @@ public class Stripper {
         // size grows!
         for (int i = 0; i < methods.size(); i++) {
             mr = methods.get(i);
+            if (mr.getOwner().name.equals("java.lang.Class") && mr.name.equals("forName")) {
+                System.out.println("CAUTION: " + mr);
+            }
+            if (mr.getOwner().name.equals("java.lang.ClassLoader") && mr.name.equals("loadClass")) {
+                System.out.println("CAUTION: " + mr);
+            }
             try {
                 m = (MethodDef) mr.resolve(repository);
             } catch (ResolveException e) {
-                if (mr.getOwner().name.equals("java.lang.Class") && mr.name.equals("forName")) {
-                    System.out.println("CAUTION: " + mr);
-                }
-                if (!mr.getOwner().name.startsWith("java.")) {
-                    System.out.println("not found: " + mr);
-                }
+                // TODO:
+                // Object.<init>: System.out.println("not found: " + mr);
+
+                // TODO
                 continue;
             }
             refs = new ArrayList<Reference>();
             code = m.getCode();
             if (code == null) {
-                // TODO: abstract
+                // abstract
             } else {
                 code.references(refs);
                 for (Reference ref : refs) {
