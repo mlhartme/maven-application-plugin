@@ -1,20 +1,6 @@
 package net.sf.beezle.maven.plugins.application;
 
-import net.sf.beezle.maven.plugins.application.data.Array;
-import net.sf.beezle.maven.plugins.application.data.BaseConstructor;
-import net.sf.beezle.maven.plugins.application.data.BaseMethod;
-import net.sf.beezle.maven.plugins.application.data.Empty;
-import net.sf.beezle.maven.plugins.application.data.Field;
-import net.sf.beezle.maven.plugins.application.data.Ifc;
-import net.sf.beezle.maven.plugins.application.data.Impl;
-import net.sf.beezle.maven.plugins.application.data.Impl2;
-import net.sf.beezle.maven.plugins.application.data.InheritedConstructor;
-import net.sf.beezle.maven.plugins.application.data.InheritedMethod;
-import net.sf.beezle.maven.plugins.application.data.InheritedStaticInit;
-import net.sf.beezle.maven.plugins.application.data.Normal;
-import net.sf.beezle.maven.plugins.application.data.StaticInit;
-import net.sf.beezle.maven.plugins.application.data.Used;
-import net.sf.beezle.maven.plugins.application.data.Used2;
+import net.sf.beezle.maven.plugins.application.data.*;
 import net.sf.beezle.mork.classfile.ClassRef;
 import net.sf.beezle.mork.classfile.MethodRef;
 import net.sf.beezle.mork.classfile.Repository;
@@ -35,6 +21,9 @@ public class StripperTest {
     @Test
     public void normal() throws Exception {
         expected(check(Normal.class, "foo"), Normal.class, Used.class);
+        expected(check(Normal.class, "argument"), Normal.class, Used.class);
+        expected(check(Normal.class, "result"), Normal.class, Used.class);
+        expected(check(Normal.class, "exception"), Normal.class, Ex.class);
     }
 
     @Test

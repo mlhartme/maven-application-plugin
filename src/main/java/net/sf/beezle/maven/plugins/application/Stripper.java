@@ -1,6 +1,7 @@
 package net.sf.beezle.maven.plugins.application;
 
 import net.sf.beezle.mork.classfile.*;
+import net.sf.beezle.mork.classfile.attribute.Attribute;
 import net.sf.beezle.sushi.archive.Archive;
 import net.sf.beezle.sushi.fs.Node;
 import net.sf.beezle.sushi.util.Strings;
@@ -122,9 +123,27 @@ public class Stripper {
         if (!methods.contains(method)) {
             methods.add(method);
             add(method.getOwner());
+            for (ClassRef arg : method.argumentTypes) {
+                add(arg);
+            }
+            add(method.returnType);
+            addExceptions(method);
             for (MethodRef derived : derived(method)) {
                 add(derived);
             }
+        }
+    }
+    public void addExceptions(MethodRef method) {
+        MethodDef def;
+
+        try {
+            def = (MethodDef) method.resolve(repository);
+        } catch (ResolveException e) {
+            // TODO
+            return;
+        }
+        for (ClassRef ex : def.getExceptions()) {
+            add(ex);
         }
     }
 
@@ -231,9 +250,5 @@ public class Stripper {
         name = Strings.removeRight(resourceName, ".class");
         name = name.replace('/', '.');
         return classes.contains(new ClassRef(name));
-    }
-
-    public int size() {
-        return classes.size();
     }
 }
