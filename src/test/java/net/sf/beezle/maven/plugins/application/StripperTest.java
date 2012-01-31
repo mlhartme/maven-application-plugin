@@ -1,8 +1,8 @@
 package net.sf.beezle.maven.plugins.application;
 
-import net.sf.beezle.maven.plugins.application.data.Base;
+import net.sf.beezle.maven.plugins.application.data.BaseConstructor;
 import net.sf.beezle.maven.plugins.application.data.Empty;
-import net.sf.beezle.maven.plugins.application.data.Inherited;
+import net.sf.beezle.maven.plugins.application.data.InheritedConstructor;
 import net.sf.beezle.maven.plugins.application.data.InheritedStaticInit;
 import net.sf.beezle.maven.plugins.application.data.Normal;
 import net.sf.beezle.maven.plugins.application.data.StaticInit;
@@ -41,12 +41,12 @@ public class StripperTest {
 
     @Test
     public void constructor() throws Exception {
-        expected(check(Base.class, "create"), Base.class, Used.class);
+        expected(check(BaseConstructor.class, "create"), BaseConstructor.class, Used.class);
     }
 
     @Test
     public void inheritedConstructor() throws Exception {
-        expected(check(Inherited.class, "create"), Inherited.class, Base.class, Used.class);
+        expected(check(InheritedConstructor.class, "create"), InheritedConstructor.class, BaseConstructor.class, Used.class);
     }
 
     //--
