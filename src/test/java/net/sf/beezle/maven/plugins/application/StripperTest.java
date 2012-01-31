@@ -1,5 +1,6 @@
 package net.sf.beezle.maven.plugins.application;
 
+import net.sf.beezle.maven.plugins.application.data.Array;
 import net.sf.beezle.maven.plugins.application.data.BaseConstructor;
 import net.sf.beezle.maven.plugins.application.data.BaseMethod;
 import net.sf.beezle.maven.plugins.application.data.Empty;
@@ -81,6 +82,10 @@ public class StripperTest {
         expected(check(Field.class, "useStatic"), Field.class, Used.class);
     }
 
+    @Test
+    public void array() throws Exception {
+        expected(check(Array.class, "create"), Array.class, Used.class);
+    }
     //--
 
     private void expected(Stripper stripper, Class<?> ... classes) {

@@ -74,6 +74,9 @@ public class Stripper {
                 for (Reference ref : refs) {
                     if (ref instanceof MethodRef) {
                         add((MethodRef) ref);
+                    } else if (ref instanceof ClassRef) {
+                        // array-new
+                        add((ClassRef) ref);
                     } else if (ref instanceof FieldRef) {
                         // 2.17.4 (initialization) and 2.17.6 (creation of new instances)
                         try {
@@ -83,7 +86,7 @@ public class Stripper {
                             // TODO
                         }
                     } else {
-                        // TODO
+                        throw new IllegalStateException(ref.toString());
                     }
                 }
             }
