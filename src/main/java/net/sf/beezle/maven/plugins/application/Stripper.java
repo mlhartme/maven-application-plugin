@@ -92,7 +92,7 @@ public class Stripper {
 
         if (!classes.contains(clazz)) {
             try {
-                // don't try to resolve a method.ref, because it might resolve to the base class initializer
+                // don't try to resolve a method.ref, because it might resolve to a base class initializer
                 def = (ClassDef) clazz.resolve(repository);
             } catch (ResolveException e) {
                 // not in classpath
