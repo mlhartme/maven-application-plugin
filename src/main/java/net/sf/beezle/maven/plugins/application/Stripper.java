@@ -30,6 +30,8 @@ public class Stripper {
 
     private final Repository repository;
     private final List<MethodRef> methods;
+
+    /** only classes in classpath */
     public final List<ClassRef> classes;
 
     public Stripper(Repository repository) {
@@ -43,7 +45,6 @@ public class Stripper {
         MethodRef mr;
         MethodDef m;
         List<Reference> refs;
-        MethodDef next;
         Code code;
 
         add(root);
@@ -86,17 +87,22 @@ public class Stripper {
     }
 
     public void add(ClassRef clazz) {
-        MethodRef ref;
+        ClassDef def;
+        MethodDef method;
 
         if (!classes.contains(clazz)) {
-            classes.add(clazz);
-            ref = new MethodRef(clazz, false, ClassRef.VOID, "<clinit>");
             try {
-                ref.resolve(repository);
-                add(ref);
+                // don't try to resolve a method.ref, because it might resolve to the base class initializer
+                def = (ClassDef) clazz.resolve(repository);
             } catch (ResolveException e) {
-                // no static initializer
+                // not in classpath
                 return;
+            }
+            classes.add(clazz);
+            add(def.superClass);
+            method = def.lookupMethod("<clinit>");
+            if (method != null) {
+                add(new MethodRef(clazz, false, ClassRef.VOID, method.name));
             }
         }
     }

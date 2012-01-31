@@ -1,6 +1,7 @@
 package net.sf.beezle.maven.plugins.application;
 
 import net.sf.beezle.maven.plugins.application.data.Empty;
+import net.sf.beezle.maven.plugins.application.data.InheritedStaticInit;
 import net.sf.beezle.maven.plugins.application.data.Normal;
 import net.sf.beezle.maven.plugins.application.data.StaticInit;
 import net.sf.beezle.maven.plugins.application.data.Used;
@@ -29,6 +30,11 @@ public class StripperTest {
     @Test
     public void staticInit() throws Exception {
         expected(check(StaticInit.class, "foo"), StaticInit.class, Used.class);
+    }
+
+    @Test
+    public void inheritedStaticInit() throws Exception {
+        expected(check(InheritedStaticInit.class, "foo"), InheritedStaticInit.class, StaticInit.class, Used.class);
     }
 
     //--
