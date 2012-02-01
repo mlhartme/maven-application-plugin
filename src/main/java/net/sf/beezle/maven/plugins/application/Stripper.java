@@ -14,7 +14,6 @@ public class Stripper {
     /** @param roots class.method names */
     public static Stripper run(Archive archive, List<String> roots) throws IOException {
         Repository repository;
-        ClassDef c;
         MethodRef m;
         Stripper stripper;
 
@@ -110,6 +109,9 @@ public class Stripper {
     }
 
     public void add(MethodRef method) {
+        MethodDef def;
+        Code code;
+
         if (!methods.contains(method)) {
             methods.add(method);
             add(method.getOwner());
@@ -117,6 +119,17 @@ public class Stripper {
                 add(arg);
             }
             add(method.returnType);
+            try {
+                def = (MethodDef) method.resolve(repository);
+                code = def.getCode();
+                if (code != null) {
+                    for (ExceptionInfo ei : code.exceptions) {
+                        add(ei.type);
+                    }
+                }
+            } catch (ResolveException e) {
+                // TODO
+            }
             // I've tested this: java loads exceptions declared via throws, even if they're never thrown!
             addExceptions(method);
             for (MethodRef derived : derived(method)) {

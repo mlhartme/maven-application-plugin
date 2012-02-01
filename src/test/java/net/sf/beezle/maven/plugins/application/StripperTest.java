@@ -27,6 +27,12 @@ public class StripperTest {
     }
 
     @Test
+    public void ctch() throws Exception {
+        expected(check(Normal.class, "catchBuiltIn"), Normal.class);
+        expected(check(Normal.class, "catchRex"), Normal.class, Rex.class);
+    }
+
+    @Test
     public void cast() throws Exception {
         expected(check(Normal.class, "cast"), Normal.class, Used.class);
     }
@@ -106,6 +112,7 @@ public class StripperTest {
         world = new World();
         repo = new Repository();
         repo.addAll(world.locateClasspathItem(getClass()));
+        /* don't return jre classes - omit no repo.addAllLazy(world.locateClasspathItem(Object.class)) */
         root = new MethodRef(clazz.getDeclaredMethod(method, args));
         stripper = new Stripper(repo);
         stripper.add(root);

@@ -23,6 +23,22 @@ public class Normal {
         return (Used) obj;
     }
 
+    public static void catchBuiltIn() {
+        try {
+            int a = 0;
+        } catch (RuntimeException e) {
+        }
+    }
+
+    public static void catchRex() {
+        try {
+            int a = 0;
+        } catch (Rex e) {
+        }
+    }
+
+
+
     public static void variable() {
         Used u = null;
     }
