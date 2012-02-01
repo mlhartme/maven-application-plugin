@@ -142,7 +142,7 @@ public class GenerateMojo extends BaseMojo {
     /**
      * @parameter default-value=""
      */
-    private String dynamicReferences = "";
+    private String extraRoots = "";
 
     /**
      * Copied verbatim to the launch code right before the final Java call,
@@ -341,6 +341,7 @@ public class GenerateMojo extends BaseMojo {
     public void jar() throws IOException, MojoExecutionException {
         Archive archive;
         OutputStream dest;
+        List<String> roots;
 
         archive = Archive.createJar(world);
         addDependencies(archive);
@@ -349,7 +350,9 @@ public class GenerateMojo extends BaseMojo {
         }
         mainAttributes(archive.manifest.getMainAttributes());
         if (strip) {
-            Stripper.run(archive, main, Separator.COMMA.split(dynamicReferences)).warnings();
+            roots = Separator.COMMA.split(extraRoots);
+            roots.add(main + ".main");
+            Stripper.run(archive, roots).warnings();
         }
         dest = getFile().createAppendStream();
         archive.save(dest);

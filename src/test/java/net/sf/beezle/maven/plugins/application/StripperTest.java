@@ -98,7 +98,8 @@ public class StripperTest {
         repo.addAll(world.locateClasspathItem(getClass()));
         root = new MethodRef(clazz.getDeclaredMethod(method, args));
         stripper = new Stripper(repo);
-        stripper.closure(root);
+        stripper.add(root);
+        stripper.closure();
         return stripper;
     }
 }

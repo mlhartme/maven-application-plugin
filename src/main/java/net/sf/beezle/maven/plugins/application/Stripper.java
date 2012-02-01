@@ -1,7 +1,6 @@
 package net.sf.beezle.maven.plugins.application;
 
 import net.sf.beezle.mork.classfile.*;
-import net.sf.beezle.mork.classfile.attribute.Attribute;
 import net.sf.beezle.sushi.archive.Archive;
 import net.sf.beezle.sushi.fs.Node;
 import net.sf.beezle.sushi.util.Strings;
@@ -12,7 +11,8 @@ import java.util.List;
 
 /** See also: http://java.sun.com/docs/books/jvms/second_edition/html/Concepts.doc.html#16491 */
 public class Stripper {
-    public static Stripper run(Archive archive, String main, List<String> dynamitcReferences) throws IOException {
+    /** @param roots class.method names */
+    public static Stripper run(Archive archive, List<String> roots) throws IOException {
         Repository repository;
         ClassDef c;
         MethodRef m;
@@ -22,27 +22,26 @@ public class Stripper {
         repository.addAllLazy(archive.data);
         // TODO: Java classes outside of runtime.jar ...
         repository.addAllLazy(archive.data.getWorld().locateClasspathItem(Object.class));
-        m = new MethodRef(new ClassRef(main), false, ClassRef.VOID, "main", new ClassRef[] { new ClassRef(String[].class) });
         stripper = new Stripper(repository);
-        for (String dynamic : dynamitcReferences) {
+        for (String root : roots) {
             int idx;
             ClassRef ref;
             ClassDef def;
 
-            idx = dynamic.lastIndexOf('.');
-            ref = new ClassRef(dynamic.substring(0, idx));
+            idx = root.lastIndexOf('.');
+            ref = new ClassRef(root.substring(0, idx));
             try {
                 def = (ClassDef) ref.resolve(repository);
             } catch (ResolveException e) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("unknown class: " + ref.toString());
             }
             for (MethodDef method : def.methods) {
-                if (method.name.equals(dynamic.substring(idx + 1))) {
+                if (method.name.equals(root.substring(idx + 1))) {
                     stripper.add(method.reference(ref, false));
                 }
             }
         }
-        stripper.closure(m);
+        stripper.closure();
         for (Node cf : archive.data.find("**/*.class")) {
             if (!stripper.referenced(cf.getRelative(archive.data))) {
                 cf.delete();
@@ -64,13 +63,12 @@ public class Stripper {
 
     }
 
-    public void closure(MethodRef root) {
+    public void closure() {
         MethodRef mr;
         MethodDef m;
         List<Reference> refs;
         Code code;
 
-        add(root);
         // size grows!
         for (int i = 0; i < methods.size(); i++) {
             mr = methods.get(i);
