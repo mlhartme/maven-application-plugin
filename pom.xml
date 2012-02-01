@@ -41,9 +41,9 @@
       <version>2.6.2</version>
     </dependency>
     <dependency>
-      <groupId>net.sf.beezle.mork</groupId>
-      <artifactId>mork</artifactId>
-      <version>1.0.1-SNAPSHOT</version>
+      <groupId>org.javassist</groupId>
+      <artifactId>javassist</artifactId>
+      <version>3.15.0-GA</version>
     </dependency>
 
     <!-- I want distribution via ssh: -->

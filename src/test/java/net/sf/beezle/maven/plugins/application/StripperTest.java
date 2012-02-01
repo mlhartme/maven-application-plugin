@@ -1,10 +1,10 @@
 package net.sf.beezle.maven.plugins.application;
 
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
+import javassist.NotFoundException;
 import net.sf.beezle.maven.plugins.application.data.*;
-import net.sf.beezle.mork.classfile.ClassRef;
-import net.sf.beezle.mork.classfile.MethodRef;
-import net.sf.beezle.mork.classfile.Repository;
-import net.sf.beezle.sushi.fs.World;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 public class StripperTest {
     @Test
     public void empty() throws Exception {
-        expected(check(Empty.class, "main", String[].class), Empty.class);
+        expected(check(Empty.class, "main"), Empty.class);
     }
 
     @Test
@@ -94,27 +94,32 @@ public class StripperTest {
     //--
 
     private void expected(Stripper stripper, Class<?> ... classes) {
-        List<ClassRef> expected;
+        List<String> expected;
+        List<String> actual;
 
-        expected = new ArrayList<ClassRef>();
+        expected = new ArrayList<String>();
         for (Class<?> c : classes) {
-            expected.add(new ClassRef(c));
+            expected.add(c.getName());
         }
-        assertEquals(expected, stripper.classes);
+        actual = new ArrayList<String>();
+        for (CtClass c : stripper.classes) {
+            if (!c.getName().startsWith("java.") && !c.isPrimitive()) {
+                actual.add(c.getName());
+            }
+        }
+        assertEquals(expected, actual);
     }
 
-    private Stripper check(Class<?> clazz, String method, Class<?> ... args) throws Exception {
-        World world;
-        Repository repo;
+    private Stripper check(Class<?> clazz, String method) throws Exception {
+        ClassPool pool;
+        CtClass cc;
         Stripper stripper;
-        MethodRef root;
+        CtMethod root;
 
-        world = new World();
-        repo = new Repository();
-        repo.addAll(world.locateClasspathItem(getClass()));
-        /* don't return jre classes - omit no repo.addAllLazy(world.locateClasspathItem(Object.class)) */
-        root = new MethodRef(clazz.getDeclaredMethod(method, args));
-        stripper = new Stripper(repo);
+        pool = ClassPool.getDefault();
+        cc = pool.get(clazz.getName());
+        root = cc.getDeclaredMethod(method);
+        stripper = new Stripper(pool);
         stripper.add(root);
         stripper.closure();
         return stripper;
