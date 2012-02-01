@@ -12,7 +12,7 @@ import java.util.List;
 
 /** See also: http://java.sun.com/docs/books/jvms/second_edition/html/Concepts.doc.html#16491 */
 public class Stripper {
-    public static void run(Archive archive, String main, List<String> dynamitcReferences) throws IOException {
+    public static Stripper run(Archive archive, String main, List<String> dynamitcReferences) throws IOException {
         Repository repository;
         ClassDef c;
         MethodRef m;
@@ -48,6 +48,7 @@ public class Stripper {
                 cf.delete();
             }
         }
+        return stripper;
     }
 
     private final Repository repository;
@@ -73,15 +74,6 @@ public class Stripper {
         // size grows!
         for (int i = 0; i < methods.size(); i++) {
             mr = methods.get(i);
-            if (mr.getOwner().name.startsWith("java.lang.reflect.")) {
-                System.out.println("CAUTION: " + mr);
-            }
-            if (mr.getOwner().name.equals("java.lang.Class") && mr.name.equals("forName")) {
-                System.out.println("CAUTION: " + mr);
-            }
-            if (mr.getOwner().name.equals("java.lang.ClassLoader") && mr.name.equals("loadClass")) {
-                System.out.println("CAUTION: " + mr);
-            }
             try {
                 m = (MethodDef) mr.resolve(repository);
             } catch (ResolveException e) {
@@ -251,5 +243,19 @@ public class Stripper {
         name = Strings.removeRight(resourceName, ".class");
         name = name.replace('/', '.');
         return classes.contains(new ClassRef(name));
+    }
+
+    public void warnings() {
+        for (MethodRef mr : methods) {
+            if (mr.getOwner().name.startsWith("java.lang.reflect.")) {
+                System.out.println("CAUTION: " + mr);
+            }
+            if (mr.getOwner().name.equals("java.lang.Class") && mr.name.equals("forName")) {
+                System.out.println("CAUTION: " + mr);
+            }
+            if (mr.getOwner().name.equals("java.lang.ClassLoader") && mr.name.equals("loadClass")) {
+                System.out.println("CAUTION: " + mr);
+            }
+        }
     }
 }

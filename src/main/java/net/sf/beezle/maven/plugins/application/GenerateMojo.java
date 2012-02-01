@@ -349,7 +349,7 @@ public class GenerateMojo extends BaseMojo {
         }
         mainAttributes(archive.manifest.getMainAttributes());
         if (strip) {
-            Stripper.run(archive, main, Separator.COMMA.split(dynamicReferences));
+            Stripper.run(archive, main, Separator.COMMA.split(dynamicReferences)).warnings();
         }
         dest = getFile().createAppendStream();
         archive.save(dest);
