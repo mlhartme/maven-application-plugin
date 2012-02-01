@@ -27,6 +27,16 @@ public class StripperTest {
     }
 
     @Test
+    public void cast() throws Exception {
+        expected(check(Normal.class, "cast"), Normal.class, Used.class);
+    }
+
+    @Test
+    public void variable() throws Exception {
+        expected(check(Normal.class, "variable"), Normal.class /* Not: Used.class */);
+    }
+
+    @Test
     public void staticInit() throws Exception {
         expected(check(StaticInit.class, "foo"), StaticInit.class, Used.class);
     }

@@ -352,7 +352,7 @@ public class GenerateMojo extends BaseMojo {
         if (strip) {
             roots = Separator.COMMA.split(extraRoots);
             roots.add(main + ".main");
-            Stripper.run(archive, roots).warnings();
+            Stripper.run(archive, roots) /* TODO .warnings() */;
         }
         dest = getFile().createAppendStream();
         archive.save(dest);
