@@ -150,9 +150,9 @@ public class Stripper {
         int size;
         CodeAttribute code;
 
-        if (!methods.contains(method)) {
-            methods.add(method);
+        if (!contains(methods, method)) {
             add(method.getDeclaringClass());
+            methods.add(method);
             for (CtClass p : method.getParameterTypes()) {
                 add(p);
             }
@@ -185,7 +185,19 @@ public class Stripper {
         }
     }
 
-    private boolean contains(Object[] objects, Object element) {
+    /** CtBehavior.equals compare method name and arguments only ... */
+    private static boolean contains(List<CtBehavior> lst, CtBehavior right) {
+        for (CtBehavior left : lst) {
+            if (left.equals(right)) {
+                if (left.getDeclaringClass().equals(right.getDeclaringClass())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean contains(Object[] objects, Object element) {
         for (Object obj : objects) {
             if (obj.equals(element)) {
                 return true;
