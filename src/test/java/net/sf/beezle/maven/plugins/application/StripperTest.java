@@ -1,5 +1,6 @@
 package net.sf.beezle.maven.plugins.application;
 
+import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -118,7 +119,8 @@ public class StripperTest {
         Stripper stripper;
         CtMethod root;
 
-        pool = ClassPool.getDefault();
+        pool = new ClassPool();
+        pool.appendClassPath(new ClassClassPath(this.getClass()));
         cc = pool.get(clazz.getName());
         root = cc.getDeclaredMethod(method);
         stripper = new Stripper(pool);
