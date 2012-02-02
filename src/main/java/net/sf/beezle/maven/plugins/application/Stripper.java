@@ -48,10 +48,11 @@ public class Stripper {
 
             @Override
             public URL find(String classname) {
+                // TODO: node.getUri.toURL() complains about unknown protocol; over, ClassPool only the results whether it's != null
                 try {
-                    return node(classname).getURI().toURL();
+                    return new URL("file:///" + node(classname).getPath());
                 } catch (MalformedURLException e) {
-                    throw new IllegalStateException();
+                    throw new IllegalStateException(e);
                 }
             }
 
@@ -78,7 +79,7 @@ public class Stripper {
             }
         }
         stripper.closure();
-        for (Node cf : archive.data.find("** /*.class")) {
+        for (Node cf : archive.data.find("**/*.class")) {
             if (!stripper.referenced(cf.getRelative(archive.data))) {
                 cf.delete();
             }
