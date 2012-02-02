@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.jar.Attributes;
 
 import com.google.common.base.Splitter;
+import javassist.NotFoundException;
 import net.sf.beezle.sushi.util.Separator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -352,7 +353,11 @@ public class GenerateMojo extends BaseMojo {
         if (strip) {
             roots = Separator.COMMA.split(extraRoots);
             roots.add(main + ".main");
-            Stripper.run(archive, roots) /* TODO .warnings() */;
+            try {
+                Stripper.run(archive, roots) /* TODO .warnings() */;
+            } catch (NotFoundException e) {
+                throw new MojoExecutionException("class not found", e);
+            }
         }
         dest = getFile().createAppendStream();
         archive.save(dest);

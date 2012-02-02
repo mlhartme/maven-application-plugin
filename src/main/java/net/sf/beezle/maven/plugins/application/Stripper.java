@@ -1,5 +1,7 @@
 package net.sf.beezle.maven.plugins.application;
 
+import javassist.ClassClassPath;
+import javassist.ClassPath;
 import javassist.ClassPool;
 import javassist.CtBehavior;
 import javassist.CtClass;
@@ -14,41 +16,64 @@ import javassist.bytecode.ExceptionTable;
 import javassist.bytecode.ExceptionsAttribute;
 import javassist.bytecode.Opcode;
 import net.sf.beezle.sushi.archive.Archive;
+import net.sf.beezle.sushi.fs.Node;
 import net.sf.beezle.sushi.util.Strings;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 /** See also: http://java.sun.com/docs/books/jvms/second_edition/html/Concepts.doc.html#16491 */
 public class Stripper {
     /** @param roots class.method names */
-    public static Stripper run(Archive archive, List<String> roots) throws IOException {
-        /*
-        Repository repository;
-        MethodRef m;
+    public static Stripper run(final Archive archive, List<String> roots) throws IOException, NotFoundException {
+        ClassPool pool;
+        CtMethod m;
         Stripper stripper;
 
-        repository = new Repository();
-        repository.addAllLazy(archive.data);
-        // TODO: Java classes outside of runtime.jar ...
-        repository.addAllLazy(archive.data.getWorld().locateClasspathItem(Object.class));
-        stripper = new Stripper(repository);
+        pool = new ClassPool();
+        pool.appendClassPath(new ClassClassPath(Object.class));
+        pool.appendClassPath(new ClassPath() {
+            @Override
+            public InputStream openClassfile(String classname) throws NotFoundException {
+                try {
+                    return node(classname).createInputStream();
+                } catch (IOException e) {
+                    throw new NotFoundException(classname, e);
+                }
+            }
+
+            @Override
+            public URL find(String classname) {
+                try {
+                    return node(classname).getURI().toURL();
+                } catch (MalformedURLException e) {
+                    throw new IllegalStateException();
+                }
+            }
+
+            @Override
+            public void close() {
+            }
+
+            private Node node(String classname) {
+                return archive.data.join(classname.replace('.', '/') + ".class");
+            }
+        });
+
+        stripper = new Stripper(pool);
         for (String root : roots) {
             int idx;
-            ClassRef ref;
-            ClassDef def;
+            CtClass def;
 
             idx = root.lastIndexOf('.');
-            ref = new ClassRef(root.substring(0, idx));
-            try {
-                def = (ClassDef) ref.resolve(repository);
-            } catch (ResolveException e) {
-                throw new IllegalArgumentException("unknown class: " + ref.toString());
-            }
-            for (MethodDef method : def.methods) {
-                if (method.name.equals(root.substring(idx + 1))) {
-                    stripper.add(method.reference(ref, false));
+            def = pool.get(root.substring(0, idx));
+            for (CtMethod method : def.getDeclaredMethods()) {
+                if (method.getName().equals(root.substring(idx + 1))) {
+                    stripper.add(method);
                 }
             }
         }
@@ -58,7 +83,7 @@ public class Stripper {
                 cf.delete();
             }
         }
-        return stripper;*/ return null;
+        return stripper;
     }
 
     private final ClassPool pool;
