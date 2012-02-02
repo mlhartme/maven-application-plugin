@@ -3,12 +3,13 @@ package net.sf.beezle.maven.plugins.application;
 import javassist.ClassPool;
 import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.CtConstructor;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import javassist.bytecode.BadBytecode;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.CodeIterator;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.Descriptor;
 import javassist.bytecode.ExceptionTable;
 import javassist.bytecode.ExceptionsAttribute;
 import javassist.bytecode.Opcode;
@@ -17,7 +18,6 @@ import net.sf.beezle.sushi.util.Strings;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /** See also: http://java.sun.com/docs/books/jvms/second_edition/html/Concepts.doc.html#16491 */
@@ -74,43 +74,81 @@ public class Stripper {
 
     }
 
-    public void closure() {
+    public void closure() throws NotFoundException {
         CtBehavior m;
         CodeAttribute code;
         CodeIterator iter;
-        int idx;
+        int pos;
+        ConstPool pool;
+        int index;
+        CtClass clazz;
+        CtBehavior b;
 
         // size grows!
         for (int i = 0; i < methods.size(); i++) {
             m = methods.get(i);
             code = m.getMethodInfo().getCodeAttribute();
+            if (code == null) {
+                continue;
+            }
+            pool = code.getConstPool();
             iter = code.iterator();
             while (iter.hasNext()) {
                 try {
-                    idx = iter.next();
+                    pos = iter.next();
                 } catch (BadBytecode e) {
                     throw new IllegalStateException(e);
                 }
-                switch (iter.byteAt(idx)) {
-                    case Opcode.INVOKESPECIAL:
-                    case Opcode.INVOKEVIRTUAL:
-                    case Opcode.INVOKEINTERFACE:
-                        // TODO
+                switch (iter.byteAt(pos)) {
+                    case Opcode.GETSTATIC:
+                    case Opcode.PUTSTATIC:
+                    case Opcode.GETFIELD:
+                    case Opcode.PUTFIELD:
+                        add(Descriptor.toCtClass(pool.getFieldrefType(iter.u16bitAt(pos + 1)), this.pool));
                         break;
-                    // TODO: casts
-                    // fields
+                    case Opcode.INVOKEVIRTUAL:
+                    case Opcode.INVOKESTATIC:
+                    case Opcode.INVOKESPECIAL:
+                        index = iter.u16bitAt(pos + 1);
+                        clazz = Descriptor.toCtClass(pool.getMethodrefClassName(index), this.pool);
+                        try {
+                            b = clazz.getMethod(pool.getMethodrefName(index), pool.getMethodrefType(index));
+                        } catch (NotFoundException e) {
+                            b = clazz.getConstructor(pool.getMethodrefType(index));
+                        }
+                        add(b);
+                        break;
+                    case Opcode.INVOKEINTERFACE:
+                        index = iter.u16bitAt(pos + 1);
+                        clazz = Descriptor.toCtClass(pool.getInterfaceMethodrefClassName(index), this.pool);
+                        add(clazz.getMethod(pool.getInterfaceMethodrefName(index), pool.getInterfaceMethodrefType(index)));
+                        break;
+                    case Opcode.ANEWARRAY:
+                    case Opcode.CHECKCAST:
+                    case Opcode.MULTIANEWARRAY:
+                    case Opcode.NEW:
+                        add(this.pool.getCtClass(pool.getClassInfo(iter.u16bitAt(pos + 1))));
+                        break;
                     default:
-                        // ignores
+                        // nothing
                 }
-
             }
         }
     }
+
+    private CtMethod interfaceMethodInfo(ConstPool pool, int index) throws NotFoundException {
+        CtClass ifc;
+
+        ifc = Descriptor.toCtClass(pool.getInterfaceMethodrefClassName(index), this.pool);
+        return ifc.getMethod(pool.getInterfaceMethodrefName(index), pool.getInterfaceMethodrefType(index));
+    }
+
 
     public void add(CtBehavior method) throws NotFoundException {
         ExceptionTable exceptions;
         ExceptionsAttribute ea;
         int size;
+        CodeAttribute code;
 
         if (!methods.contains(method)) {
             methods.add(method);
@@ -121,10 +159,16 @@ public class Stripper {
             if (method instanceof CtMethod) {
                 add(((CtMethod) method).getReturnType());
             }
-            exceptions = method.getMethodInfo().getCodeAttribute().getExceptionTable();
-            size = exceptions.size();
-            for (int i = 0; i < size; i++) {
-                add(pool.get(method.getMethodInfo().getConstPool().getClassInfo(exceptions.catchType(i))));
+            code = method.getMethodInfo().getCodeAttribute();
+            if (code != null) {
+                exceptions = code.getExceptionTable();
+                size = exceptions.size();
+                for (int i = 0; i < size; i++) {
+                    String name = method.getMethodInfo().getConstPool().getClassInfo(exceptions.catchType(i));
+                    if (name != null) {
+                        add(pool.get(name));
+                    }
+                }
             }
             ea = method.getMethodInfo().getExceptionsAttribute();
             if (ea != null) {
@@ -154,15 +198,15 @@ public class Stripper {
     public List<CtMethod> derived(CtMethod baseMethod) throws NotFoundException {
         List<CtMethod> result;
         CtClass baseClass;
-        CtMethod derivedMethod;
 
         result = new ArrayList<CtMethod>();
         baseClass = baseMethod.getDeclaringClass();
         for (CtClass derivedClass : classes) {
             if (baseClass.equals(derivedClass.getSuperclass()) || contains(derivedClass.getInterfaces(), baseClass)) {
-                derivedMethod = derivedClass.getDeclaredMethod(baseMethod.getName(), baseMethod.getParameterTypes());
-                if (derivedMethod != null) {
-                    result.add(derivedMethod);
+                try {
+                    result.add(derivedClass.getDeclaredMethod(baseMethod.getName(), baseMethod.getParameterTypes()));
+                } catch (NotFoundException e) {
+                    // nothing to do
                 }
             }
         }

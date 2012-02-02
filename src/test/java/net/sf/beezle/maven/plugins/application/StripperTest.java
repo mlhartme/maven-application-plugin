@@ -103,7 +103,9 @@ public class StripperTest {
         }
         actual = new ArrayList<String>();
         for (CtClass c : stripper.classes) {
-            if (!c.getName().startsWith("java.") && !c.isPrimitive()) {
+            if (c.getName().startsWith("java.") || c.getName().startsWith("sun.") || c.isPrimitive() || c.isArray()) {
+                //
+            } else {
                 actual.add(c.getName());
             }
         }
