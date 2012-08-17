@@ -4,15 +4,15 @@
   <parent>
     <groupId>net.sf.beezle.maven.poms</groupId>
     <artifactId>parent</artifactId>
-    <version>1.0.8</version>
+    <version>2.0.0-SNAPSHOT</version>
   </parent>
 
   <name>Maven Application Plugin</name>
   <url>https://sourceforge.net/apps/trac/beezle/wiki/ApplicationHome</url>
-  <description>Generates an application file. An application file is a single file containing your entire application,
-    it's all you need to distribute or run the application. Technically, an application file is a Bash shell script
-    with an appended executable jar file. You can invoke it directly or you can pass it as an argument to java -jar.
-    You can rename it without breaking the application.
+  <description>Generates an application file. An application file is a single executable file containing your entire 
+    application, it's all you need to distribute or run the application. Technically, an application file is a Bash 
+    shell script with an appended executable jar file. You can invoke it directly or you can pass it as an argument 
+    to java -jar. You can rename it without breaking the application.
   </description>
 
   <groupId>net.sf.beezle.maven.plugins</groupId>
@@ -29,9 +29,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:https://beezle.svn.sourceforge.net/svnroot/beezle/application/trunk</connection>
-    <developerConnection>scm:svn:https://beezle.svn.sourceforge.net/svnroot/beezle/application/trunk</developerConnection>
-    <url>http://beezle.svn.sourceforge.net/viewvc/beezle/application/trunk</url>
+    <connection>scm:git:https://github.com/mlhartme/maven-application-plugin.git</connection>
+    <developerConnection>scm:git:https://github.com/mlhartme/maven-application-plugin.git</developerConnection>
+    <url>scm:git:https://github.com/mlhartme/maven-application-plugin</url>
   </scm>
 
   <dependencies>
@@ -107,12 +107,5 @@
       </plugin>
     </plugins>
   </reporting>
-
-  <distributionManagement>
-    <site>
-      <id>sourceforge</id>
-      <url>scp://shell.sourceforge.net/home/project-web/beezle/htdocs/application/site</url>
-    </site>
-  </distributionManagement>
 
 </project>
