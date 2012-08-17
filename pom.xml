@@ -8,7 +8,7 @@
   </parent>
 
   <name>Maven Application Plugin</name>
-  <url>https://sourceforge.net/apps/trac/beezle/wiki/ApplicationHome</url>
+  <url>https://github.com/mlhartme/maven-application-plugin/wiki/maven-application-plugin</url>
   <description>Generates an application file. An application file is a single executable file containing your entire 
     application, it's all you need to distribute or run the application. Technically, an application file is a Bash 
     shell script with an appended executable jar file. You can invoke it directly or you can pass it as an argument 
