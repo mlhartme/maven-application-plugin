@@ -26,6 +26,11 @@
     <url>scm:git:ssh://git@github.com/mlhartme/maven-application-plugin</url>
   </scm>
 
+  <properties>
+    <oneandone.java.source>1.7</oneandone.java.source>
+    <oneandone.java.target>1.7</oneandone.java.target>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>net.oneandone</groupId>

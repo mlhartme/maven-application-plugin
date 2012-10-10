@@ -224,9 +224,9 @@ public class Stripper {
             if (clazz.getSuperclass() != null) {
                 add(clazz.getSuperclass());
             }
-            for (CtBehavior method : clazz.getDeclaredBehaviors()) {
-                if (method.getName().equals("<clinit>")) {
-                    add(method);
+            for (CtBehavior behavior : clazz.getDeclaredBehaviors()) {
+                if (behavior.getName().equals("<clinit>")) {
+                    add(behavior);
                 }
             }
             for (CtMethod derived : clazz.getDeclaredMethods()) {
@@ -338,9 +338,5 @@ public class Stripper {
                 System.out.println("CAUTION: " + b);
             }
         }
-    }
-
-    public ClassPool getPool() {
-        return pool;
     }
 }
