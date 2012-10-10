@@ -15,7 +15,7 @@
     to java -jar. You can rename it without breaking the application.
   </description>
 
-  <groupId>net.sf.beezle.maven.plugins</groupId>
+  <groupId>net.oneandone.maven.plugins</groupId>
   <artifactId>application</artifactId>
   <version>1.4-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>

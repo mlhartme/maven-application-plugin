@@ -19,7 +19,6 @@ import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
-import javassist.NotFoundException;
 import net.oneandone.maven.plugins.application.data.*;
 import org.junit.Test;
 
