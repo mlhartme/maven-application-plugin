@@ -89,10 +89,36 @@ public class Stripper {
         stripper.closure();
         for (Node cf : archive.data.find("**/*.class")) {
             CtClass c;
+            boolean modified;
 
             c = stripper.reference(cf.getRelative(archive.data));
             if (c != null) {
-
+                modified = false;
+                for (CtField field : c.getDeclaredFields()) {
+                    if (!stripper.fields.contains(field)) {
+                        c.removeField(field);
+                        System.out.println("remove " + field);
+                        modified = true;
+                    }
+                }
+                for (CtBehavior behavior : c.getDeclaredBehaviors()) {
+                    if (!contains(stripper.behaviors, behavior)) {
+                        if (behavior instanceof CtConstructor) {
+                            c.removeConstructor((CtConstructor) behavior);
+                        } else {
+                            c.removeMethod((CtMethod) behavior);
+                        }
+                        modified = true;
+                        System.out.println("remove " + behavior);
+                    }
+                }
+                if (modified) {
+                    try {
+                        c.writeFile();
+                    } catch (CannotCompileException e) {
+                        throw new IllegalStateException(e);
+                    }
+                }
             } else {
                 cf.deleteFile();
             }
