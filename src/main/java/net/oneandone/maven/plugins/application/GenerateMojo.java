@@ -34,19 +34,19 @@ import java.util.jar.Attributes;
 
 import com.google.common.base.Splitter;
 import javassist.NotFoundException;
-import net.sf.beezle.sushi.util.Separator;
+import net.oneandone.sushi.util.Separator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import net.sf.beezle.sushi.archive.Archive;
-import net.sf.beezle.sushi.archive.ArchiveException;
-import net.sf.beezle.sushi.fs.World;
-import net.sf.beezle.sushi.fs.Node;
-import net.sf.beezle.sushi.fs.file.FileNode;
-import net.sf.beezle.sushi.util.Strings;
-import net.sf.beezle.sushi.xml.Builder;
-import net.sf.beezle.sushi.xml.Dom;
+import net.oneandone.sushi.archive.Archive;
+import net.oneandone.sushi.archive.ArchiveException;
+import net.oneandone.sushi.fs.World;
+import net.oneandone.sushi.fs.Node;
+import net.oneandone.sushi.fs.file.FileNode;
+import net.oneandone.sushi.util.Strings;
+import net.oneandone.sushi.xml.Builder;
+import net.oneandone.sushi.xml.Dom;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -216,9 +216,9 @@ public class GenerateMojo extends BaseMojo {
         dir.mkdirsOpt();
         script();
         jar();
-        getLog().info(">" + size(getFile().getFile()) + getFile());
+        getLog().info(">" + size(getFile().toPath().toFile()) + getFile());
         verify();
-        projectHelper.attachArtifact(project, "sh", classifier, getFile().getFile());
+        projectHelper.attachArtifact(project, "sh", classifier, getFile().toPath().toFile());
     }
 
     private void verify() throws MojoExecutionException {
@@ -227,7 +227,7 @@ public class GenerateMojo extends BaseMojo {
         Class<?> clazz;
 
         try {
-            url = getFile().getFile().toURI().toURL();
+            url = getFile().toPath().toFile().toURI().toURL();
         } catch (MalformedURLException e) {
             throw new IllegalStateException();
         }
@@ -286,7 +286,7 @@ public class GenerateMojo extends BaseMojo {
         lines.add("exit $?");
         file = getFile();
         file.writeLines(lines);
-        file.setMode(0755);
+        file.setPermissions("rwxrw-rw-");
     }
 
     public static void validate(String name) throws MojoExecutionException {

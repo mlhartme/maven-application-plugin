@@ -20,11 +20,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import net.sf.beezle.sushi.util.Separator;
+import net.oneandone.sushi.util.Separator;
+import net.oneandone.sushi.fs.World;
+import net.oneandone.sushi.fs.Node;
+import net.oneandone.sushi.util.Strings;
 import org.apache.maven.plugin.MojoExecutionException;
-import net.sf.beezle.sushi.fs.World;
-import net.sf.beezle.sushi.fs.Node;
-import net.sf.beezle.sushi.util.Strings;
 
 /**
  * Distributes application files.
@@ -109,6 +109,6 @@ public class DistributeMojo extends BaseMojo {
     private void copy(Node src, Node dest) throws IOException {
         getLog().info("  copy " + src.getURI() + " " + dest.getURI());
         src.copyFile(dest);
-        dest.setMode(src.getMode());
+        dest.setPermissions(src.getPermissions());
     }
 }

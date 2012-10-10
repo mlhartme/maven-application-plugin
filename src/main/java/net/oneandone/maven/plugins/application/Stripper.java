@@ -30,9 +30,9 @@ import javassist.bytecode.Descriptor;
 import javassist.bytecode.ExceptionTable;
 import javassist.bytecode.ExceptionsAttribute;
 import javassist.bytecode.Opcode;
-import net.sf.beezle.sushi.archive.Archive;
-import net.sf.beezle.sushi.fs.Node;
-import net.sf.beezle.sushi.util.Strings;
+import net.oneandone.sushi.archive.Archive;
+import net.oneandone.sushi.fs.Node;
+import net.oneandone.sushi.util.Strings;
 
 import java.io.IOException;
 import java.io.InputStream;

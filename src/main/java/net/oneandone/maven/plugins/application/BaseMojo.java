@@ -15,12 +15,10 @@
  */
 package net.oneandone.maven.plugins.application;
 
-import net.sf.beezle.sushi.fs.file.FileNode;
+import net.oneandone.sushi.fs.file.FileNode;
 import org.apache.maven.plugin.AbstractMojo;
-import net.sf.beezle.sushi.fs.World;
-import net.sf.beezle.sushi.fs.Node;
-
-import java.io.File;
+import net.oneandone.sushi.fs.World;
+import net.oneandone.sushi.fs.Node;
 
 /**
  */

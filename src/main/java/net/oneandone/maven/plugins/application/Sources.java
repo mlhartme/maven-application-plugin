@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.beezle.sushi.fs.Node;
+import net.oneandone.sushi.fs.Node;
 import org.apache.maven.artifact.Artifact;
 
 public class Sources {
