@@ -15,13 +15,7 @@
  */
 package net.oneandone.maven.plugins.application;
 
-import javassist.ClassClassPath;
-import javassist.ClassPath;
-import javassist.ClassPool;
-import javassist.CtBehavior;
-import javassist.CtClass;
-import javassist.CtMethod;
-import javassist.NotFoundException;
+import javassist.*;
 import javassist.bytecode.BadBytecode;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.CodeIterator;
@@ -94,7 +88,12 @@ public class Stripper {
         }
         stripper.closure();
         for (Node cf : archive.data.find("**/*.class")) {
-            if (!stripper.referenced(cf.getRelative(archive.data))) {
+            CtClass c;
+
+            c = stripper.reference(cf.getRelative(archive.data));
+            if (c != null) {
+
+            } else {
                 cf.deleteFile();
             }
         }
@@ -109,11 +108,13 @@ public class Stripper {
     /** only classes in classpath, no java runtime classes */
     public final List<CtClass> classes;
 
+    public final List<CtField> fields;
+
     public Stripper(ClassPool pool) {
         this.pool = pool;
         this.behaviors = new ArrayList<>();
         this.classes = new ArrayList<>();
-
+        this.fields = new ArrayList<>();
     }
 
     public void closure() throws NotFoundException {
@@ -144,7 +145,9 @@ public class Stripper {
                     case Opcode.PUTSTATIC:
                     case Opcode.GETFIELD:
                     case Opcode.PUTFIELD:
-                        add(Descriptor.toCtClass(pool.getFieldrefType(iter.u16bitAt(pos + 1)), this.pool));
+                        index = iter.u16bitAt(pos + 1);
+                        clazz = Descriptor.toCtClass(pool.getFieldrefClassName(index), this.pool);
+                        add(clazz.getField(pool.getFieldrefName(index)));
                         break;
                     case Opcode.INVOKEVIRTUAL:
                     case Opcode.INVOKESTATIC:
@@ -215,6 +218,14 @@ public class Stripper {
                     add(derived);
                 }
             }
+        }
+    }
+
+    public void add(CtField field) throws NotFoundException {
+        if (!fields.contains(field)) {
+            fields.add(field);
+            add(field.getDeclaringClass());
+            add(field.getType());
         }
     }
 
@@ -315,12 +326,14 @@ public class Stripper {
         return false;
     }
 
-    public boolean referenced(String resourceName) throws NotFoundException {
+    public CtClass reference(String resourceName) throws NotFoundException {
         String name;
+        CtClass clazz;
 
         name = Strings.removeRight(resourceName, ".class");
         name = name.replace('/', '.');
-        return classes.contains(pool.get(name));
+        clazz = pool.get(name);
+        return classes.contains(clazz) ? clazz : null;
     }
 
     public void warnings() {
