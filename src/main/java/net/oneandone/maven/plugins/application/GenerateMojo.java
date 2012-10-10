@@ -339,7 +339,6 @@ public class GenerateMojo extends BaseMojo {
 
     public void jar() throws IOException, MojoExecutionException {
         Archive archive;
-        OutputStream dest;
         List<String> roots;
 
         archive = Archive.createJar(world);
@@ -357,9 +356,9 @@ public class GenerateMojo extends BaseMojo {
                 throw new MojoExecutionException("class not found", e);
             }
         }
-        dest = getFile().createAppendStream();
-        archive.save(dest);
-        dest.close();
+        try (OutputStream dest = getFile().createAppendStream()) {
+            archive.save(dest);
+        }
     }
 
     private static String gav(Artifact artifact) {

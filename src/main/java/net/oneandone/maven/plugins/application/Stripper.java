@@ -106,13 +106,13 @@ public class Stripper {
     /** reachable code */
     private final List<CtBehavior> behaviors;
 
-    /** only classes in classpath */
+    /** only classes in classpath, no java runtime classes */
     public final List<CtClass> classes;
 
     public Stripper(ClassPool pool) {
         this.pool = pool;
-        this.behaviors = new ArrayList<CtBehavior>();
-        this.classes = new ArrayList<CtClass>();
+        this.behaviors = new ArrayList<>();
+        this.classes = new ArrayList<>();
 
     }
 
@@ -230,7 +230,7 @@ public class Stripper {
                 }
             }
             for (CtMethod derived : clazz.getDeclaredMethods()) {
-                for (CtBehavior base : new ArrayList<CtBehavior>(behaviors)) { // TODO: copy ...
+                for (CtBehavior base : new ArrayList<>(behaviors)) { // TODO: copy ...
                     if (base instanceof CtMethod) {
                         if (overrides((CtMethod) base, derived)) {
                             add(derived);
