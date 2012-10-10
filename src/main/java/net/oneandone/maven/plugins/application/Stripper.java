@@ -100,7 +100,7 @@ public class Stripper {
         return stripper;
     }
 
-    private final ClassPool pool;
+    private final ClassPool classPool;
 
     /** reachable code */
     private final List<CtBehavior> behaviors;
@@ -110,8 +110,8 @@ public class Stripper {
 
     public final List<CtField> fields;
 
-    public Stripper(ClassPool pool) {
-        this.pool = pool;
+    public Stripper(ClassPool classPool) {
+        this.classPool = classPool;
         this.behaviors = new ArrayList<>();
         this.classes = new ArrayList<>();
         this.fields = new ArrayList<>();
@@ -146,14 +146,14 @@ public class Stripper {
                     case Opcode.GETFIELD:
                     case Opcode.PUTFIELD:
                         index = iter.u16bitAt(pos + 1);
-                        clazz = Descriptor.toCtClass(pool.getFieldrefClassName(index), this.pool);
+                        clazz = Descriptor.toCtClass(pool.getFieldrefClassName(index), this.classPool);
                         add(clazz.getField(pool.getFieldrefName(index)));
                         break;
                     case Opcode.INVOKEVIRTUAL:
                     case Opcode.INVOKESTATIC:
                     case Opcode.INVOKESPECIAL:
                         index = iter.u16bitAt(pos + 1);
-                        clazz = Descriptor.toCtClass(pool.getMethodrefClassName(index), this.pool);
+                        clazz = Descriptor.toCtClass(pool.getMethodrefClassName(index), this.classPool);
                         try {
                             b = clazz.getMethod(pool.getMethodrefName(index), pool.getMethodrefType(index));
                         } catch (NotFoundException e) {
@@ -163,14 +163,14 @@ public class Stripper {
                         break;
                     case Opcode.INVOKEINTERFACE:
                         index = iter.u16bitAt(pos + 1);
-                        clazz = Descriptor.toCtClass(pool.getInterfaceMethodrefClassName(index), this.pool);
+                        clazz = Descriptor.toCtClass(pool.getInterfaceMethodrefClassName(index), this.classPool);
                         add(clazz.getMethod(pool.getInterfaceMethodrefName(index), pool.getInterfaceMethodrefType(index)));
                         break;
                     case Opcode.ANEWARRAY:
                     case Opcode.CHECKCAST:
                     case Opcode.MULTIANEWARRAY:
                     case Opcode.NEW:
-                        add(this.pool.getCtClass(pool.getClassInfo(iter.u16bitAt(pos + 1))));
+                        add(this.classPool.getCtClass(pool.getClassInfo(iter.u16bitAt(pos + 1))));
                         break;
                     default:
                         // nothing
@@ -202,7 +202,7 @@ public class Stripper {
                 for (int i = 0; i < size; i++) {
                     String name = behavior.getMethodInfo().getConstPool().getClassInfo(exceptions.catchType(i));
                     if (name != null) {
-                        add(pool.get(name));
+                        add(classPool.get(name));
                     }
                 }
             }
@@ -210,7 +210,7 @@ public class Stripper {
             if (ea != null) {
                 // I've tested this: java loads exceptions declared via throws, even if they're never thrown!
                 for (String exception : ea.getExceptions()) {
-                    add(pool.get(exception));
+                    add(classPool.get(exception));
                 }
             }
             if (behavior instanceof CtMethod) {
@@ -332,7 +332,7 @@ public class Stripper {
 
         name = Strings.removeRight(resourceName, ".class");
         name = name.replace('/', '.');
-        clazz = pool.get(name);
+        clazz = classPool.get(name);
         return classes.contains(clazz) ? clazz : null;
     }
 
