@@ -59,7 +59,8 @@ import org.xml.sax.SAXException;
  */
 public class GenerateMojo extends BaseMojo {
     /**
-     * Main class to be launched. Specified as a fully qualified Java Class name.
+     * Main class to be launched. Specified as a fully qualified Java Class name. Similar to the main class
+     * specified when you start the JVM.
      *
      * @parameter
      * @required
@@ -91,8 +92,8 @@ public class GenerateMojo extends BaseMojo {
     private String remove = "";
 
     /**
-     * Dependency jar file entries that may overlap: the last entry will be added to the application file.
-     * Comma-separated list of patterns.
+     * Dependency jar file entries that may overlap: the last entry will be added to the application file, all
+     * previous entries get lost. Comma-separated list of patterns.
      *
      * @parameter expression=""
      */
@@ -100,13 +101,14 @@ public class GenerateMojo extends BaseMojo {
 
     /**
      * Dependency jar file entries that may be duplicates if they are equal. Comma-separated list of patterns.
+     * Only one of the duplicates will be added to the application file.
      *
      * @parameter expression=""
      */
     private String equal = "";
 
     /**
-     * Classifier to deploy applications with.
+     * Classifier to deploy application files with.
      * Specify a different value if you want to deploy multiple applications.
      *
      * @parameter default-value="application"
@@ -318,7 +320,7 @@ public class GenerateMojo extends BaseMojo {
     }
 
     public String getOptsVar() {
-        String suffix = "_OPTS";
+        final String suffix = "_OPTS";
         StringBuilder builder;
         char c;
 
@@ -595,7 +597,7 @@ public class GenerateMojo extends BaseMojo {
             hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
             // this happens if your hostname is not in /etc/hosts and not resolvable via dns.
-            hostname = "unknown";
+            hostname = "unknownhost";
         }
         return System.getProperty("user.name") + "@" + hostname;
     }
