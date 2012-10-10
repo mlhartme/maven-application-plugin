@@ -173,6 +173,11 @@ public class GenerateMojo extends BaseMojo {
     private String projectJar;
 
     /**
+     * @parameter default-value="${project.build.directory}/application-strip.log"
+     */
+    private String stripLog;
+
+    /**
      * Internal parameter.
      * @parameter property="project"
      * @required
@@ -248,7 +253,7 @@ public class GenerateMojo extends BaseMojo {
         Node file;
         List<String> lines;
 
-        lines = new ArrayList<String>();
+        lines = new ArrayList<>();
         lines.addAll(Arrays.asList(
                 "#!/bin/sh",
                 // resolve symlinks
@@ -351,7 +356,7 @@ public class GenerateMojo extends BaseMojo {
             roots = Separator.COMMA.split(extraRoots);
             roots.add(main + ".main");
             try {
-                Stripper.run(archive, roots) /* TODO .warnings() */;
+                Stripper.run(archive, roots, world.file(stripLog)) /* TODO .warnings() */;
             } catch (NotFoundException e) {
                 throw new MojoExecutionException("class not found", e);
             }

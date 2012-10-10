@@ -15,6 +15,7 @@
  */
 package net.oneandone.maven.plugins.application;
 
+import com.sun.org.apache.xpath.internal.NodeSet;
 import javassist.*;
 import javassist.bytecode.BadBytecode;
 import javassist.bytecode.CodeAttribute;
@@ -26,10 +27,12 @@ import javassist.bytecode.ExceptionsAttribute;
 import javassist.bytecode.Opcode;
 import net.oneandone.sushi.archive.Archive;
 import net.oneandone.sushi.fs.Node;
+import net.oneandone.sushi.fs.file.FileNode;
 import net.oneandone.sushi.util.Strings;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,7 +41,7 @@ import java.util.List;
 /** See also: http://java.sun.com/docs/books/jvms/second_edition/html/Concepts.doc.html#16491 */
 public class Stripper {
     /** @param roots class.method names */
-    public static Stripper run(final Archive archive, List<String> roots) throws IOException, NotFoundException {
+    public static Stripper run(final Archive archive, List<String> roots, FileNode log) throws IOException, NotFoundException {
         ClassPool pool;
         Stripper stripper;
 
@@ -87,40 +90,58 @@ public class Stripper {
             }
         }
         stripper.closure();
-        for (Node cf : archive.data.find("**/*.class")) {
-            CtClass c;
-            boolean modified;
+        try (Writer logWriter = log.createWriter()) {
+            List<Node> deletes; // defer until log output is complete
 
-            c = stripper.reference(cf.getRelative(archive.data));
-            if (c != null) {
-                modified = false;
-                for (CtField field : c.getDeclaredFields()) {
-                    if (!stripper.fields.contains(field)) {
-                        c.removeField(field);
-                        System.out.println("remove " + field);
-                        modified = true;
-                    }
-                }
-                for (CtBehavior behavior : c.getDeclaredBehaviors()) {
-                    if (!contains(stripper.behaviors, behavior)) {
-                        if (behavior instanceof CtConstructor) {
-                            c.removeConstructor((CtConstructor) behavior);
-                        } else {
-                            c.removeMethod((CtMethod) behavior);
+            deletes = new ArrayList<>();
+            for (Node cf : archive.data.find("**/*.class")) {
+                CtClass c;
+                List<String> modified;
+
+                c = stripper.reference(cf.getRelative(archive.data));
+                if (c == null) {
+                    logWriter.write("- ");
+                    logWriter.write(className(cf.getRelative(archive.data)));
+                    logWriter.write('\n');
+                    deletes.add(cf);
+                } else {
+                    modified = new ArrayList<>();
+                    for (CtField field : c.getDeclaredFields()) {
+                        if (!stripper.fields.contains(field)) {
+                            modified.add(field.getType().getName() + " " + field.getName());
+                            c.removeField(field);
                         }
-                        modified = true;
-                        System.out.println("remove " + behavior);
+                    }
+                    for (CtBehavior behavior : c.getDeclaredBehaviors()) {
+                        if (!contains(stripper.behaviors, behavior)) {
+                            if (behavior instanceof CtConstructor) {
+                                modified.add(behavior.getLongName());
+                                c.removeConstructor((CtConstructor) behavior);
+                            } else {
+                                modified.add(((CtMethod) behavior).getReturnType().getName() + " " + behavior.getLongName());
+                                c.removeMethod((CtMethod) behavior);
+                            }
+                        }
+                    }
+                    if (!modified.isEmpty()) {
+                        try {
+                            c.writeFile();
+                        } catch (CannotCompileException e) {
+                            throw new IllegalStateException(e);
+                        }
+                        logWriter.write("* ");
+                        logWriter.write(c.getName());
+                        logWriter.write('\n');
+                        for (String line : modified) {
+                            logWriter.write("  - ");
+                            logWriter.write(line);
+                            logWriter.write('\n');
+                        }
                     }
                 }
-                if (modified) {
-                    try {
-                        c.writeFile();
-                    } catch (CannotCompileException e) {
-                        throw new IllegalStateException(e);
-                    }
-                }
-            } else {
-                cf.deleteFile();
+            }
+            for (Node node : deletes) {
+                node.deleteFile();
             }
         }
         return stripper;
@@ -353,15 +374,15 @@ public class Stripper {
     }
 
     public CtClass reference(String resourceName) throws NotFoundException {
-        String name;
         CtClass clazz;
 
-        name = Strings.removeRight(resourceName, ".class");
-        name = name.replace('/', '.');
-        clazz = classPool.get(name);
+        clazz = classPool.get(className(resourceName));
         return classes.contains(clazz) ? clazz : null;
     }
 
+    public static String className(String resourceName) {
+        return Strings.removeRight(resourceName, ".class").replace('/', '.');
+    }
     public void warnings() {
         String name;
 
