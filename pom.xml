@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>net.sf.beezle.maven.poms</groupId>
-    <artifactId>parent</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <groupId>net.oneandone.maven.poms</groupId>
+    <artifactId>foss-parent</artifactId>
+    <version>1.1.4</version>
   </parent>
 
   <name>Maven Application Plugin</name>
@@ -20,18 +20,10 @@
   <version>1.4-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <licenses>
-    <license>
-      <name>GNU Lesser General Public License, Version 2.1</name>
-      <url>http://www.gnu.org/licenses/lgpl-2.1.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-
   <scm>
-    <connection>scm:git:https://github.com/mlhartme/maven-application-plugin.git</connection>
-    <developerConnection>scm:git:https://github.com/mlhartme/maven-application-plugin.git</developerConnection>
-    <url>scm:git:https://github.com/mlhartme/maven-application-plugin</url>
+    <connection>scm:git:ssh://git@github.com/mlhartme/maven-application-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/mlhartme/maven-application-plugin.git</developerConnection>
+    <url>scm:git:ssh://git@github.com/mlhartme/maven-application-plugin</url>
   </scm>
 
   <dependencies>
