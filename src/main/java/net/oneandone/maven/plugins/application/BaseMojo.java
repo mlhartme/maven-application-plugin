@@ -29,14 +29,14 @@ public abstract class BaseMojo extends AbstractMojo {
      * Directory where to place the Launch Script and the executable Jar file.
      * Usually, there's no need to change the default value, which is target.
      *
-     * @parameter expression="${project.build.directory}"
+     * @parameter property="project.build.directory"
      */
     protected FileNode dir;
 
     /**
      * Name for the generated application file.
      *
-     * @parameter expression="${project.artifactId}"
+     * @parameter property="project.artifactId"
      */
     protected String name;
 

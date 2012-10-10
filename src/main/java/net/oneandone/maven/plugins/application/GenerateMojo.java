@@ -18,7 +18,6 @@ package net.oneandone.maven.plugins.application;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,7 +31,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.jar.Attributes;
 
-import com.google.common.base.Splitter;
 import javassist.NotFoundException;
 import net.oneandone.sushi.util.Separator;
 import org.apache.maven.artifact.Artifact;
@@ -168,13 +166,13 @@ public class GenerateMojo extends BaseMojo {
     private List<String> scopes = Arrays.asList(Artifact.SCOPE_COMPILE, Artifact.SCOPE_RUNTIME);
 
     /**
-     * @parameter expression="${project.build.directory}/${project.build.finalName}.jar"
+     * @parameter default-value="${project.build.directory}/${project.build.finalName}.jar"
      */
     private String projectJar;
 
     /**
      * Internal parameter.
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */

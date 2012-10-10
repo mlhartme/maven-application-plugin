@@ -23,7 +23,6 @@ import java.util.List;
 import net.oneandone.sushi.util.Separator;
 import net.oneandone.sushi.fs.World;
 import net.oneandone.sushi.fs.Node;
-import net.oneandone.sushi.util.Strings;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**

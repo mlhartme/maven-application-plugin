@@ -3,6 +3,9 @@
   <body>
     <release date="2012-10-xx" version="1.4.0">
       <action date="2012-10-10" dev="mhm" type="update">
+        Java 7 required to run this plugin.
+      </action>
+      <action date="2012-10-10" dev="mhm" type="update">
         Changed License from LGPL to Apache 2.0.
       </action>
       <action date="2012-10-10" dev="mhm" type="update">
