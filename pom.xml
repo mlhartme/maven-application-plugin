@@ -30,7 +30,7 @@
     <dependency>
       <groupId>net.sf.beezle.sushi</groupId>
       <artifactId>sushi</artifactId>
-      <version>2.6.2</version>
+      <version>2.7.0</version>
     </dependency>
     <dependency>
       <groupId>org.javassist</groupId>
@@ -42,7 +42,7 @@
     <dependency>
       <groupId>com.jcraft</groupId>
       <artifactId>jsch</artifactId>
-      <version>0.1.42</version>
+      <version>0.1.48</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>

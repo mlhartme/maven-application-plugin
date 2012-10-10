@@ -96,7 +96,7 @@ public class Stripper {
         stripper.closure();
         for (Node cf : archive.data.find("**/*.class")) {
             if (!stripper.referenced(cf.getRelative(archive.data))) {
-                cf.delete();
+                cf.deleteFile();
             }
         }
         return stripper;

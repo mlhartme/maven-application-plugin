@@ -424,7 +424,7 @@ public class GenerateMojo extends BaseMojo {
                     if (srcfile.diff(destfile)) {
                         if (mayOverwrite.contains(srcfile)) {
                             getLog().debug("overwrite different " + relative);
-                            destfile.delete();
+                            destfile.deleteFile();
                             srcfile.copyFile(destfile);
                         } else {
                             duplicates.add(relative);
@@ -481,7 +481,7 @@ public class GenerateMojo extends BaseMojo {
                 // skip - I'd delete all contained files
             } else {
                 getLog().debug("removing " + srcfile);
-                srcfile.delete();
+                srcfile.deleteFile();
             }
         }
     }
@@ -521,7 +521,7 @@ public class GenerateMojo extends BaseMojo {
         }
         builder.append(dest.readString());
         dest.writeString(builder.toString());
-        src.delete();
+        src.deleteFile();
         getLog().debug("merged " + path + ":\n" + builder);
     }
 
@@ -566,7 +566,7 @@ public class GenerateMojo extends BaseMojo {
                 throw new IOException("unknown element: " + e.getTagName());
             }
         }
-        file.delete();
+        file.deleteFile();
         return plexus;
     }
 

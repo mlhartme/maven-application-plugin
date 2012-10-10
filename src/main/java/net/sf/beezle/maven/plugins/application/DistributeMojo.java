@@ -102,7 +102,7 @@ public class DistributeMojo extends BaseMojo {
 
     private void move(Node src, Node dest) throws IOException {
         getLog().info("  move " + src.getURI() + " " + dest.getURI());
-        dest.deleteOpt();
+        dest.deleteFileOpt();
         src.move(dest);
     }
 
