@@ -46,7 +46,6 @@ public class Stripper {
     /** @param roots class.method names */
     public static Stripper run(final Archive archive, List<String> roots) throws IOException, NotFoundException {
         ClassPool pool;
-        CtMethod m;
         Stripper stripper;
 
         pool = new ClassPool();
@@ -103,20 +102,21 @@ public class Stripper {
     }
 
     private final ClassPool pool;
-    private final List<CtBehavior> methods;
+
+    /** reachable code */
+    private final List<CtBehavior> behaviors;
 
     /** only classes in classpath */
     public final List<CtClass> classes;
 
     public Stripper(ClassPool pool) {
         this.pool = pool;
-        this.methods = new ArrayList<CtBehavior>();
+        this.behaviors = new ArrayList<CtBehavior>();
         this.classes = new ArrayList<CtClass>();
 
     }
 
     public void closure() throws NotFoundException {
-        CtBehavior m;
         CodeAttribute code;
         CodeIterator iter;
         int pos;
@@ -126,9 +126,8 @@ public class Stripper {
         CtBehavior b;
 
         // size grows!
-        for (int i = 0; i < methods.size(); i++) {
-            m = methods.get(i);
-            code = m.getMethodInfo().getCodeAttribute();
+        for (int i = 0; i < behaviors.size(); i++) {
+            code = behaviors.get(i).getMethodInfo().getCodeAttribute();
             if (code == null) {
                 continue;
             }
@@ -177,54 +176,71 @@ public class Stripper {
         }
     }
 
-    private CtMethod interfaceMethodInfo(ConstPool pool, int index) throws NotFoundException {
-        CtClass ifc;
-
-        ifc = Descriptor.toCtClass(pool.getInterfaceMethodrefClassName(index), this.pool);
-        return ifc.getMethod(pool.getInterfaceMethodrefName(index), pool.getInterfaceMethodrefType(index));
-    }
-
-
-    public void add(CtBehavior method) throws NotFoundException {
+    /** method or constructor is reachable */
+    public void add(CtBehavior behavior) throws NotFoundException {
         ExceptionTable exceptions;
         ExceptionsAttribute ea;
         int size;
         CodeAttribute code;
 
-        if (!contains(methods, method)) {
-            add(method.getDeclaringClass());
-            methods.add(method);
-            for (CtClass p : method.getParameterTypes()) {
+        if (!contains(behaviors, behavior)) {
+            add(behavior.getDeclaringClass());
+            behaviors.add(behavior);
+            for (CtClass p : behavior.getParameterTypes()) {
                 add(p);
             }
-            if (method instanceof CtMethod) {
-                add(((CtMethod) method).getReturnType());
+            if (behavior instanceof CtMethod) {
+                add(((CtMethod) behavior).getReturnType());
             }
-            code = method.getMethodInfo().getCodeAttribute();
+            code = behavior.getMethodInfo().getCodeAttribute();
             if (code != null) {
                 exceptions = code.getExceptionTable();
                 size = exceptions.size();
                 for (int i = 0; i < size; i++) {
-                    String name = method.getMethodInfo().getConstPool().getClassInfo(exceptions.catchType(i));
+                    String name = behavior.getMethodInfo().getConstPool().getClassInfo(exceptions.catchType(i));
                     if (name != null) {
                         add(pool.get(name));
                     }
                 }
             }
-            ea = method.getMethodInfo().getExceptionsAttribute();
+            ea = behavior.getMethodInfo().getExceptionsAttribute();
             if (ea != null) {
                 // I've tested this: java loads exceptions declared via throws, even if they're never thrown!
                 for (String exception : ea.getExceptions()) {
                     add(pool.get(exception));
                 }
             }
-            if (method instanceof CtMethod) {
-                for (CtMethod derived : derived((CtMethod) method)) {
+            if (behavior instanceof CtMethod) {
+                for (CtMethod derived : derived((CtMethod) behavior)) {
                     add(derived);
                 }
             }
         }
     }
+
+    public void add(CtClass clazz) throws NotFoundException {
+        if (!classes.contains(clazz)) {
+            classes.add(clazz);
+            if (clazz.getSuperclass() != null) {
+                add(clazz.getSuperclass());
+            }
+            for (CtBehavior method : clazz.getDeclaredBehaviors()) {
+                if (method.getName().equals("<clinit>")) {
+                    add(method);
+                }
+            }
+            for (CtMethod derived : clazz.getDeclaredMethods()) {
+                for (CtBehavior base : new ArrayList<CtBehavior>(behaviors)) { // TODO: copy ...
+                    if (base instanceof CtMethod) {
+                        if (overrides((CtMethod) base, derived)) {
+                            add(derived);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     /** CtBehavior.equals compare method name and arguments only ... */
     private static boolean contains(List<CtBehavior> lst, CtBehavior right) {
@@ -264,29 +280,6 @@ public class Stripper {
             }
         }
         return result;
-    }
-
-    public void add(CtClass clazz) throws NotFoundException {
-        if (!classes.contains(clazz)) {
-            classes.add(clazz);
-            if (clazz.getSuperclass() != null) {
-                add(clazz.getSuperclass());
-            }
-            for (CtBehavior method : clazz.getDeclaredBehaviors()) {
-                if (method.getName().equals("<clinit>")) {
-                    add(method);
-                }
-            }
-            for (CtMethod derived : clazz.getDeclaredMethods()) {
-                for (CtBehavior base : new ArrayList<CtBehavior>(methods)) { // TODO: copy ...
-                    if (base instanceof CtMethod) {
-                        if (overrides((CtMethod) base, derived)) {
-                            add(derived);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private boolean overrides(CtMethod base, CtMethod derivedMethod) throws NotFoundException {
@@ -333,16 +326,16 @@ public class Stripper {
     public void warnings() {
         String name;
 
-        for (CtBehavior m : methods) {
-            name = m.getDeclaringClass().getName();
+        for (CtBehavior b : behaviors) {
+            name = b.getDeclaringClass().getName();
             if (name.startsWith("java.lang.reflect.")) {
-                System.out.println("CAUTION: " + m);
+                System.out.println("CAUTION: " + b);
             }
-            if (name.equals("java.lang.Class") && m.getName().equals("forName")) {
-                System.out.println("CAUTION: " + m);
+            if (name.equals("java.lang.Class") && b.getName().equals("forName")) {
+                System.out.println("CAUTION: " + b);
             }
-            if (name.equals("java.lang.ClassLoader") && m.getName().equals("loadClass")) {
-                System.out.println("CAUTION: " + m);
+            if (name.equals("java.lang.ClassLoader") && b.getName().equals("loadClass")) {
+                System.out.println("CAUTION: " + b);
             }
         }
     }

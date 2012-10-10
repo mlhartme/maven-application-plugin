@@ -20,8 +20,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import net.oneandone.sushi.fs.World;
 import net.oneandone.sushi.fs.Node;
 
-/**
- */
 public abstract class BaseMojo extends AbstractMojo {
     protected final World world;
 
