@@ -15,10 +15,8 @@
  */
 package net.oneandone.maven.plugins.application;
 
-import com.sun.org.apache.bcel.internal.classfile.AccessFlags;
 import javassist.CannotCompileException;
 import javassist.ClassClassPath;
-import javassist.ClassPath;
 import javassist.ClassPool;
 import javassist.CtBehavior;
 import javassist.CtClass;
@@ -42,62 +40,39 @@ import net.oneandone.sushi.util.Strings;
 import org.apache.maven.plugin.logging.Log;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /** See also: http://java.sun.com/docs/books/jvms/second_edition/html/Concepts.doc.html#16491 */
 public class Stripper {
-    /** @param roots class.method names */
+    /** @param roots class names or class.method names */
     public static Stripper run(final Archive archive, List<String> roots, FileNode log) throws IOException, NotFoundException {
         ClassPool pool;
         Stripper stripper;
 
         pool = new ClassPool();
         pool.appendClassPath(new ClassClassPath(Object.class));
-        pool.appendClassPath(new ClassPath() {
-            @Override
-            public InputStream openClassfile(String classname) throws NotFoundException {
-                try {
-                    return node(classname).createInputStream();
-                } catch (IOException e) {
-                    throw new NotFoundException(classname, e);
-                }
-            }
-
-            @Override
-            public URL find(String classname) {
-                // TODO: node.getUri.toURL() complains about unknown protocol; over, ClassPool only the results whether it's != null
-                try {
-                    return new URL("file:///" + node(classname).getPath());
-                } catch (MalformedURLException e) {
-                    throw new IllegalStateException(e);
-                }
-            }
-
-            @Override
-            public void close() {
-            }
-
-            private Node node(String classname) {
-                return archive.data.join(classname.replace('.', '/') + ".class");
-            }
-        });
+        pool.appendClassPath(new ArchiveClassPath(archive));
 
         stripper = new Stripper(pool);
         for (String root : roots) {
             int idx;
             CtClass def;
 
-            idx = root.lastIndexOf('.');
-            def = pool.get(root.substring(0, idx));
-            for (CtMethod method : def.getDeclaredMethods()) {
-                if (method.getName().equals(root.substring(idx + 1))) {
-                    stripper.add(method);
+            def = pool.getOrNull(root);
+            if (def != null) {
+                for (CtBehavior behavior : def.getDeclaredBehaviors()) {
+                    stripper.add(behavior);
+                }
+            } else {
+                idx = root.lastIndexOf('.');
+                def = pool.get(root.substring(0, idx));
+                for (CtMethod method : def.getDeclaredMethods()) {
+                    if (method.getName().equals(root.substring(idx + 1))) {
+                        stripper.add(method);
+                    }
                 }
             }
         }
@@ -415,4 +390,5 @@ public class Stripper {
             }
         }
     }
+
 }

@@ -308,7 +308,7 @@ public class GenerateMojo extends BaseMojo {
         List<Artifact> artifacts;
         Artifact a;
 
-        artifacts = new ArrayList<Artifact>();
+        artifacts = new ArrayList<>();
         for (Iterator<?> i = project.getArtifacts().iterator(); i.hasNext(); ) {
             a = (Artifact) i.next();
             if (scopes.contains(a.getScope())) {
@@ -384,7 +384,7 @@ public class GenerateMojo extends BaseMojo {
 
         plexus = null;
         sources = new Sources();
-        duplicatePaths = new ArrayList<String>();
+        duplicatePaths = new ArrayList<>();
         for (Artifact artifact : getDependencies()) {
             getLog().info("+" + size(artifact.getFile()) + gav(artifact));
             file = artifact.getFile();

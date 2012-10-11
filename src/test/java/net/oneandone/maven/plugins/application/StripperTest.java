@@ -112,11 +112,11 @@ public class StripperTest {
         List<String> expected;
         List<String> actual;
 
-        expected = new ArrayList<String>();
+        expected = new ArrayList<>();
         for (Class<?> c : classes) {
             expected.add(c.getName());
         }
-        actual = new ArrayList<String>();
+        actual = new ArrayList<>();
         for (CtClass c : stripper.classes) {
             if (c.getName().startsWith("java.") || c.getName().startsWith("sun.") || c.getName().startsWith("com.sun.")
                     || c.getName().startsWith("javax.") || c.isPrimitive() || c.isArray()) {
