@@ -15,8 +15,18 @@
  */
 package net.oneandone.maven.plugins.application;
 
-import com.sun.org.apache.xpath.internal.NodeSet;
-import javassist.*;
+import com.sun.org.apache.bcel.internal.classfile.AccessFlags;
+import javassist.CannotCompileException;
+import javassist.ClassClassPath;
+import javassist.ClassPath;
+import javassist.ClassPool;
+import javassist.CtBehavior;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.Modifier;
+import javassist.NotFoundException;
 import javassist.bytecode.BadBytecode;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.CodeIterator;
@@ -29,6 +39,7 @@ import net.oneandone.sushi.archive.Archive;
 import net.oneandone.sushi.fs.Node;
 import net.oneandone.sushi.fs.file.FileNode;
 import net.oneandone.sushi.util.Strings;
+import org.apache.maven.plugin.logging.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +47,7 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /** See also: http://java.sun.com/docs/books/jvms/second_edition/html/Concepts.doc.html#16491 */
@@ -383,19 +395,23 @@ public class Stripper {
     public static String className(String resourceName) {
         return Strings.removeRight(resourceName, ".class").replace('/', '.');
     }
-    public void warnings() {
-        String name;
 
+    public static final List<String> SAVE = Arrays.asList(
+            "sun.misc.Unsafe", "sun.reflect.ConstantPool", "sun.misc.VM",
+            "java.io.Console", "java.io.FileSystem", "java.io.ObjectStreamClass",
+            "java.lang.Double", "java.lang.Object", "java.lang.Package", "java.lang.System", "java.lang.ClassLoader",
+            "java.lang.Thread", "java.langg.Throwable", "java.lang.SecurityManager",
+            "java.net.InetAddress", "java.net.NetworkingInterface",
+            "java.security.AccessController",
+            "java.util.TimeZone");
+
+    public void warnings(Log log) {
+        /// Not that you cannot apply native to fields or classes
         for (CtBehavior b : behaviors) {
-            name = b.getDeclaringClass().getName();
-            if (name.startsWith("java.lang.reflect.")) {
-                System.out.println("CAUTION: " + b);
-            }
-            if (name.equals("java.lang.Class") && b.getName().equals("forName")) {
-                System.out.println("CAUTION: " + b);
-            }
-            if (name.equals("java.lang.ClassLoader") && b.getName().equals("loadClass")) {
-                System.out.println("CAUTION: " + b);
+            if ((b.getModifiers() & Modifier.NATIVE) != 0) {
+                if (!SAVE.contains(b.getDeclaringClass().getName())) {
+                    log.warn("native method: " + b.getLongName());
+                }
             }
         }
     }

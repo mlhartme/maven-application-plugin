@@ -356,7 +356,7 @@ public class GenerateMojo extends BaseMojo {
             roots = Separator.COMMA.split(extraRoots);
             roots.add(main + ".main");
             try {
-                Stripper.run(archive, roots, world.file(stripLog)) /* TODO .warnings() */;
+                Stripper.run(archive, roots, world.file(stripLog)).warnings(getLog());
             } catch (NotFoundException e) {
                 throw new MojoExecutionException("class not found", e);
             }
@@ -466,7 +466,7 @@ public class GenerateMojo extends BaseMojo {
     private List<Node> find(Node srcdir, String property) throws IOException, MojoExecutionException {
         List<Node> mayOverwrite;
 
-        mayOverwrite = new ArrayList<Node>();
+        mayOverwrite = new ArrayList<>();
         for (String path : split(property)) {
             mayOverwrite.addAll(srcdir.find(path));
         }
