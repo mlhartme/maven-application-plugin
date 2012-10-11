@@ -132,13 +132,15 @@ public class GenerateMojo extends BaseMojo {
     private String path = "";
 
     /**
-     * True to remove unused classes from that application file.
+     * True to remove unused code from that application file.
      *
      * @parameter default-value="false"
      */
     private boolean strip;
 
     /**
+     * Additional classes or methods to consider referenced when stripping the application file. Comma-separated list.
+     *
      * @parameter default-value=""
      */
     private String extraRoots = "";
