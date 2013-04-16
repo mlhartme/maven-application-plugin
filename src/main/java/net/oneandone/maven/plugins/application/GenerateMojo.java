@@ -159,7 +159,15 @@ public class GenerateMojo extends BaseMojo {
      *
      * @parameter
      */
-    private List<String> extensions = new ArrayList<String>();
+    private List<String> extensions = new ArrayList<>();
+
+    /**
+     * Name of a prolog file. When specified, all line are copied verbatim to the beginning of the generated file.
+     * Otherwise, "#/bin/sh" is used as the prolog.
+     *
+     * @parameter
+     */
+    private String prolog = null;
 
     /**
      * Scopes to include in compound jar. There's usually no need to touch this option.
@@ -256,8 +264,12 @@ public class GenerateMojo extends BaseMojo {
         List<String> lines;
 
         lines = new ArrayList<>();
+        if (prolog != null) {
+            lines.addAll(world.file(prolog).readLines());
+        } else {
+            lines.add("#!/bin/sh");
+        }
         lines.addAll(Arrays.asList(
-                "#!/bin/sh",
                 // resolve symlinks
                 "APP=\"$0\"",
                 "while [ -h \"$APP\" ] ; do",

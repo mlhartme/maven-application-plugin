@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
+    <release date="2013-04-14" version="1.4.1">
+      <action date="2013-04-14" dev="mhm" type="add">
+        Added prolog configuration option.
+      </action>
+    </release>
     <release date="2012-10-11" version="1.4.0">
       <action date="2012-10-10" dev="mhm" type="update">
         Java 7 required to run this plugin.
