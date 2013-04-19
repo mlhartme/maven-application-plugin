@@ -27,12 +27,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.jar.Attributes;
 
 import javassist.NotFoundException;
+import net.oneandone.sushi.fs.ExistsException;
+import net.oneandone.sushi.fs.filter.Filter;
 import net.oneandone.sushi.util.Separator;
+import net.oneandone.sushi.util.Substitution;
+import net.oneandone.sushi.util.SubstitutionException;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -162,12 +168,11 @@ public class GenerateMojo extends BaseMojo {
     private List<String> extensions = new ArrayList<>();
 
     /**
-     * Name of a prolog file. When specified, all line are copied verbatim to the beginning of the generated file.
-     * Otherwise, "#/bin/sh" is used as the prolog.
+     * File with a launcher template. Overrides the built-in template.
      *
      * @parameter
      */
-    private String prolog = null;
+    private String launcher = null;
 
     /**
      * Scopes to include in compound jar. There's usually no need to touch this option.
@@ -259,54 +264,37 @@ public class GenerateMojo extends BaseMojo {
         }
     }
 
-    private void script() throws IOException {
+    private void script() throws IOException, MojoExecutionException {
         Node file;
-        List<String> lines;
 
-        lines = new ArrayList<>();
-        if (prolog != null) {
-            lines.addAll(world.file(prolog).readLines());
-        } else {
-            lines.add("#!/bin/sh");
-        }
-        lines.addAll(Arrays.asList(
-                // resolve symlinks
-                "APP=\"$0\"",
-                "while [ -h \"$APP\" ] ; do",
-                "  ls=$(ls -ld \"$APP\")",
-                "  link=$(expr \"$ls\" : '.*-> \\(.*\\)$')",
-                "  if expr \"$link\" : '/.*' > /dev/null; then",
-                "    APP=\"$link\"",
-                "  else",
-                "    APP=$(dirname \"$APP\")\"/$link\"",
-                "  fi",
-                "done",
-                // will be overridden with the configured name
-                "NAME=$(basename \"$APP\")",
-                "APP=$(dirname \"$APP\")",
-                "APP=$(cd \"$APP\" && pwd)",
-                "APP=\"$APP/$NAME\"",
-
-                // make pom configuration available for "extensions:"
-                "PATH=" + path,
-                "JAVA=" + java,
-                "OPTIONS=" + options,
-                "MAIN=" + main,
-                "NAME=" + name
-                ));
-        lines.addAll(extensions);
-
-        // Notes
-        // * $OPTIONS before getOptsVar to allow users to override built-in options
-        // * reference jar via $APP to have symbolic links eleminated
-        // * do not call with -jar to allow classpath modifications
-        lines.add("$JAVA $OPTIONS $" + getOptsVar() + " -cp \"$APP\" $MAIN \"$@\"");
-        // explicitly quit the script because I want to append to this file:
-        lines.add("exit $?");
         file = getFile();
-        file.writeLines(lines);
+        file.writeString(launcherTemplate());
         file.setPermissions("rwxrw-rw-");
     }
+
+    public String launcherTemplate() throws IOException, MojoExecutionException {
+        String str;
+        Map<String, String> variables;
+
+        variables = new HashMap<>();
+        variables.put("path", path);
+        variables.put("java", java);
+        variables.put("name", name);
+        variables.put("main", main);
+        variables.put("options", options);
+        variables.put("optionsVariable", getOptsVar());
+        variables.put("extensions", Separator.RAW_LINE.join(extensions));
+        str = world.resource("launcher").readString();
+        try {
+            return S.apply(str, variables);
+        } catch (SubstitutionException e) {
+            throw new MojoExecutionException("invalid launcher template: " + e.getMessage(), e);
+        }
+    }
+
+    //--
+
+    public static final Substitution S = new Substitution("${{", "}}", '\\');
 
     public static void validate(String name) throws MojoExecutionException {
         for (int i = 0, max = name.length(); i < max; i++) {

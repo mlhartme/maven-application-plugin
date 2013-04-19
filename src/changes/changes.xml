@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
+    <release date="2013-04-20" version="1.4.2">
+      <action date="2013-04-20" dev="mhm" type="update">
+        Generalized prolog to launcher template.
+      </action>
+    </release>
     <release date="2013-04-19" version="1.4.1">
       <action date="2013-04-14" dev="mhm" type="add">
         Added prolog configuration option.
