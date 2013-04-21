@@ -275,6 +275,7 @@ public class GenerateMojo extends BaseMojo {
     public String launcherTemplate() throws IOException, MojoExecutionException {
         String str;
         Map<String, String> variables;
+        Node src;
 
         variables = new HashMap<>();
         variables.put("path", path);
@@ -284,7 +285,8 @@ public class GenerateMojo extends BaseMojo {
         variables.put("options", options);
         variables.put("optionsVariable", getOptsVar());
         variables.put("extensions", Separator.RAW_LINE.join(extensions));
-        str = world.resource("launcher").readString();
+        src = launcher != null ? world.file(launcher) : world.resource("launcher");
+        str = src.readString();
         try {
             return S.apply(str, variables);
         } catch (SubstitutionException e) {
