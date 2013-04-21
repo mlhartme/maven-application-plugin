@@ -2,7 +2,7 @@
 APP="$0"
 while [ -h "$APP" ] ; do
   ls=$(ls -ld "$APP")
-  link=$(expr "$ls" : '.*-> \\(.*\\)$')
+  link=$(expr "$ls" : '.*-> \(.*\)$')
   if expr "$link" : '/.*' > /dev/null; then
     APP="$link"
   else
