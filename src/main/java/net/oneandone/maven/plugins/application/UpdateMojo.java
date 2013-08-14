@@ -134,7 +134,7 @@ public class UpdateMojo extends BaseMojo {
         } else {
             getLog().info("A " + link.getAbsolute());
         }
-        dest.link(link);
+        link.mklink(dest.getRelative(link.getParent()));
     }
 
     private FileNode resolve(Artifact artifact) throws ArtifactNotFoundException, ArtifactResolutionException {
