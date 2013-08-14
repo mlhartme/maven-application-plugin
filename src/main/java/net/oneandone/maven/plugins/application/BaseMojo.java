@@ -37,6 +37,19 @@ public abstract class BaseMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.artifactId}")
     protected String name;
 
+    /**
+     * Classifier to deploy application files with.
+     * Specify a different value if you want to deploy multiple applications.
+     */
+    @Parameter(defaultValue = "application")
+    protected String classifier = "";
+
+    /**
+     * Type to deploy application files with.
+     */
+    @Parameter(defaultValue = "sh")
+    protected String type = "";
+
     public BaseMojo() {
         this(new World());
     }

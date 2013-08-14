@@ -108,13 +108,6 @@ public class GenerateMojo extends BaseMojo {
     private String equal = "";
 
     /**
-     * Classifier to deploy application files with.
-     * Specify a different value if you want to deploy multiple applications.
-     */
-    @Parameter(defaultValue = "application")
-    private String classifier = "";
-
-    /**
      * Name of the Java Executable to be invoked by the script. Only a file name, without path.
      */
     @Parameter(defaultValue = "java")
@@ -213,7 +206,7 @@ public class GenerateMojo extends BaseMojo {
         jar();
         getLog().info(">" + size(getFile().toPath().toFile()) + getFile());
         verify();
-        projectHelper.attachArtifact(project, "sh", classifier, getFile().toPath().toFile());
+        projectHelper.attachArtifact(project, type, classifier, getFile().toPath().toFile());
     }
 
     private void verify() throws MojoExecutionException {

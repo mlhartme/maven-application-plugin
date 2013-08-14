@@ -84,7 +84,8 @@ public class UpdateMojo extends BaseMojo {
             src = null; // TODO
         }
         src.checkFile();
-        dest = world.file(versions).join(project.getArtifactId() + "-" + Strings.removeRightOpt(project.getVersion(), "-SNAPSHOT") + "-application.sh");
+        dest = world.file(versions).join(project.getArtifactId() + "-"
+                + Strings.removeRightOpt(project.getVersion(), "-SNAPSHOT") + "-" + classifier + "." + type);
         link = world.file(bin).join(symlink == null ? name : symlink);
         if (dest.exists()) {
             dest.deleteFile();
