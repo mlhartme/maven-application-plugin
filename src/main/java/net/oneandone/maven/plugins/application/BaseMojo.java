@@ -19,6 +19,7 @@ import net.oneandone.sushi.fs.file.FileNode;
 import org.apache.maven.plugin.AbstractMojo;
 import net.oneandone.sushi.fs.World;
 import net.oneandone.sushi.fs.Node;
+import org.apache.maven.plugins.annotations.Parameter;
 
 public abstract class BaseMojo extends AbstractMojo {
     protected final World world;
@@ -26,16 +27,14 @@ public abstract class BaseMojo extends AbstractMojo {
     /**
      * Directory where to place the Launch Script and the executable Jar file.
      * Usually, there's no need to change the default value, which is target.
-     *
-     * @parameter property="project.build.directory"
      */
+    @Parameter(defaultValue = "${project.build.directory}")
     protected FileNode dir;
 
     /**
      * Name for the generated application file.
-     *
-     * @parameter property="project.artifactId"
      */
+    @Parameter(defaultValue = "${project.artifactId}")
     protected String name;
 
     public BaseMojo() {

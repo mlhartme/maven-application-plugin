@@ -21,50 +21,40 @@ import net.oneandone.sushi.fs.World;
 import net.oneandone.sushi.fs.file.FileNode;
 import net.oneandone.sushi.util.Strings;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
  * Copies an application file to some setup directory.
- *
- * @goal update
  */
+@Mojo(name = "update")
 public class UpdateMojo extends BaseMojo {
     /**
      * Directory where to install the symlink.
-     *
-     * @parameter
-     * @required
      */
+    @Parameter(required = true)
     private String bin;
 
     /**
      * Name of the symlink created in bin.
-     *
-     * @parameter
      */
+    @Parameter
     private String symlink;
 
     /**
      * Release version to download from Maven repository. Local version is used when not specified.
-     *
-     * @parameter
      */
+    @Parameter
     private String release;
 
     /**
      * Directory where to keep version of the file.
-     *
-     * @parameter
-     * @required
      */
+    @Parameter(required = true)
     private String versions;
 
-    /**
-     * Internal parameter.
-     * @parameter property="project"
-     * @required
-     * @readonly
-     */
+    @Parameter(property = "project", required = true, readonly = true)
     private MavenProject project;
 
     public UpdateMojo() {

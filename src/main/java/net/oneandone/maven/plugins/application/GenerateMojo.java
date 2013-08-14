@@ -41,6 +41,11 @@ import net.oneandone.sushi.util.Substitution;
 import net.oneandone.sushi.util.SubstitutionException;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import net.oneandone.sushi.archive.Archive;
@@ -57,20 +62,14 @@ import org.xml.sax.SAXException;
 
 /**
  * Generates an application file. Merges dependency jars into a single file, prepended with a launch shell script.
- *
- * @phase package
- * @goal generate
- * @description Generates an application file
- * @requiresDependencyResolution runtime
  */
+@Mojo(name = "generate", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class GenerateMojo extends BaseMojo {
     /**
      * Main class to be launched. Specified as a fully qualified Java Class name. Similar to the main class
      * specified when you start the JVM.
-     *
-     * @parameter
-     * @required
      */
+    @Parameter(required = true)
     private String main;
 
     /**
@@ -78,77 +77,66 @@ public class GenerateMojo extends BaseMojo {
      * script available Java. E.g. use "-Dapp=$APP" to make the fully qualified application name
      * available as a system property "app". Another example: use "-Dapporig=$0" to get the original name
      * this application was invoked with.
-     *
-     * @parameter expression=""
      */
-    private String options;
+    @Parameter(defaultValue = "")
+    private String options = "";
 
     /**
      * Dependency jar entries to be concatenated before adding them to the application file. Comma-separated list of patterns.
-     *
-     * @parameter expression=""
      */
+    @Parameter(defaultValue = "")
     private String concat = "";
 
     /**
      * Dependency jar entries that will not be added to the application file. Comma-separated list of patterns.
-     *
-     * @parameter expression=""
      */
+    @Parameter(defaultValue = "")
     private String remove = "";
 
     /**
      * Dependency jar file entries that may overlap: the last entry will be added to the application file, all
      * previous entries get lost. Comma-separated list of patterns.
-     *
-     * @parameter expression=""
      */
+    @Parameter(defaultValue = "")
     private String overwrite = "";
 
     /**
      * Dependency jar file entries that may be duplicates if they are equal. Comma-separated list of patterns.
      * Only one of the duplicates will be added to the application file.
-     *
-     * @parameter expression=""
      */
+    @Parameter(defaultValue = "")
     private String equal = "";
 
     /**
      * Classifier to deploy application files with.
      * Specify a different value if you want to deploy multiple applications.
-     *
-     * @parameter default-value="application"
-     *
      */
+    @Parameter(defaultValue = "application")
     private String classifier = "";
 
     /**
      * Name of the Java Executable to be invoked by the script. Only a file name, without path.
-     *
-     * @parameter default-value="java";
      */
+    @Parameter(defaultValue = "java")
     private String java = "";
 
     /**
      * Path to search the Java Executable. Defaults to the default search path. Change this variable to specify a different location
      * to search for java.
-     *
-     * @parameter default-value="$PATH";
      */
+    @Parameter(defaultValue = "$PATH")
     private String path = "";
 
     /**
      * True to remove unused code from that application file.
-     *
-     * @parameter default-value="false"
      */
+    @Parameter(defaultValue = "false")
     private boolean strip;
 
     /**
      * Additional classes or methods to consider referenced when stripping the application file. Comma-separated list.
-     *
-     * @parameter default-value=""
      */
+    @Parameter(defaultValue = "")
     private String extraRoots = "";
 
     /**
@@ -162,49 +150,36 @@ public class GenerateMojo extends BaseMojo {
      *
      * Note that these variables are not exported, to access them from your application, you have to
      * turn them into properties!
-     *
-     * @parameter
      */
+    @Parameter
     private List<String> extensions = new ArrayList<>();
 
     /**
      * File with a launcher template. Overrides the built-in template.
-     *
-     * @parameter
      */
+    @Parameter
     private String launcher = null;
 
     /**
      * Scopes to include in compound jar. There's usually no need to touch this option.
      * Defaults to "compile" and "runtime".
-     *
-     * @parameter
      */
+    @Parameter
     private List<String> scopes = Arrays.asList(Artifact.SCOPE_COMPILE, Artifact.SCOPE_RUNTIME);
 
-    /**
-     * @parameter default-value="${project.build.directory}/${project.build.finalName}.jar"
-     */
+    @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}.jar")
     private String projectJar;
 
-    /**
-     * @parameter default-value="${project.build.directory}/application-strip.log"
-     */
+    @Parameter(defaultValue = "${project.build.directory}/application-strip.log")
     private String stripLog;
 
-    /**
-     * Internal parameter.
-     * @parameter property="project"
-     * @required
-     * @readonly
-     */
+    @Parameter(property = "project", required = true, readonly = true)
     private MavenProject project;
 
     /**
      * Maven ProjectHelper
-     *
-     * @component
      */
+    @Component
     protected MavenProjectHelper projectHelper;
 
     public GenerateMojo() {
