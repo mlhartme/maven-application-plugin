@@ -16,10 +16,16 @@
 package net.oneandone.maven.plugins.application;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
+import com.jcraft.jsch.JSchException;
+import net.oneandone.sushi.fs.Node;
+import net.oneandone.sushi.fs.NodeInstantiationException;
+import net.oneandone.sushi.fs.OnShutdown;
 import net.oneandone.sushi.fs.World;
 import net.oneandone.sushi.fs.file.FileNode;
+import net.oneandone.sushi.fs.ssh.SshNode;
 import net.oneandone.sushi.util.Strings;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -95,14 +101,24 @@ public class UpdateMojo extends BaseMojo {
             throw e;
         } catch (Exception e) {
             throw new MojoExecutionException("cannot deploy application: " + e.getMessage(), e);
+        } finally {
+            // Shutdown here, because otherwise Plexus might remove classes, that are needed for the shutdown hook
+            // TODO: what if the plugin is executed twice?
+            OnShutdown shutdown;
+
+            shutdown = OnShutdown.get();
+            Runtime.getRuntime().removeShutdownHook(shutdown);
+            shutdown.run();
         }
     }
 
-    public void doExecute() throws IOException, MojoExecutionException, ArtifactNotFoundException, ArtifactResolutionException {
+    public void doExecute()
+            throws IOException, MojoExecutionException, ArtifactNotFoundException, ArtifactResolutionException, URISyntaxException, JSchException {
         String version;
         FileNode src;
-        FileNode dest;
-        FileNode link;
+        Node dest;
+        Node link;
+        String relative;
 
         if (resolve == null) {
             version = project.getVersion();
@@ -113,14 +129,14 @@ public class UpdateMojo extends BaseMojo {
                     project.getGroupId(), project.getArtifactId(), version, type, classifier));
         }
         src.checkFile();
-        dest = world.file(applicationTarget != null ? applicationTarget : target).join(project.getArtifactId() + "-"
+        dest = node(applicationTarget != null ? applicationTarget : target).join(project.getArtifactId() + "-"
                 + Strings.removeRightOpt(version, "-SNAPSHOT") + "-" + classifier + "." + type);
-        link = world.file(target).join(symlinkName != null ? symlinkName : name);
+        link = node(target).join(symlinkName != null ? symlinkName : name);
         if (dest.exists()) {
             dest.deleteFile();
-            getLog().info("U " + dest.getAbsolute());
+            getLog().info("U " + dest.getURI());
         } else {
-            getLog().info("A " + dest.getAbsolute());
+            getLog().info("A " + dest.getURI());
         }
         src.copyFile(dest);
         dest.setPermissions(permissions);
@@ -128,13 +144,27 @@ public class UpdateMojo extends BaseMojo {
             if (link.resolveLink().equals(dest)) {
                 // the link is re-created to point to the same file, so from the user's perspective, it is not updated.
             } else {
-                getLog().info("U " + link.getAbsolute());
+                getLog().info("U " + link.getURI());
             }
             link.deleteFile();
         } else {
-            getLog().info("A " + link.getAbsolute());
+            getLog().info("A " + link.getURI());
         }
-        link.mklink(dest.getRelative(link.getParent()));
+        relative = dest.getRelative(link.getParent());
+        // TODO: sushi
+        if (link instanceof SshNode) {
+            ((SshNode) link).getRoot().exec(false, "cd", "/" + link.getParent().getPath(), "&&", "ln", "-s", relative, link.getName());
+        } else {
+            link.mklink(relative);
+        }
+    }
+
+    private Node node(String str) throws URISyntaxException, NodeInstantiationException {
+        if (str.startsWith("ssh:")) {
+            return world.node(str);
+        } else {
+            return world.file(str);
+        }
     }
 
     private FileNode resolve(Artifact artifact) throws ArtifactNotFoundException, ArtifactResolutionException {
