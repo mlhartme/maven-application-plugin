@@ -50,6 +50,12 @@ public abstract class BaseMojo extends AbstractMojo {
     @Parameter(defaultValue = "sh")
     protected String type = "";
 
+    /**
+     * Permissions for application file.
+     */
+    @Parameter(defaultValue = "rwxr-xr-x")
+    protected String permissions = "";
+
     public BaseMojo() {
         this(new World());
     }
