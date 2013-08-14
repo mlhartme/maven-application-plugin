@@ -43,7 +43,7 @@ import org.apache.maven.project.MavenProject;
  * Copies an application file to some setup directory.
  */
 @Mojo(name = "update")
-public class UpdateMojo extends BaseMojo {
+public class UploadMojo extends BaseMojo {
     /**
      * Directory where to install the symlink.
      */
@@ -86,11 +86,11 @@ public class UpdateMojo extends BaseMojo {
     @Component
     private ArtifactResolver resolver;
 
-    public UpdateMojo() {
+    public UploadMojo() {
         this(new World());
     }
 
-    public UpdateMojo(World world) {
+    public UploadMojo(World world) {
         super(world);
     }
 
