@@ -40,7 +40,7 @@ public class UpdateMojo extends BaseMojo {
      * Name of the symlink created in bin.
      */
     @Parameter
-    private String symlink;
+    private String symlinkName;
 
     /**
      * Release version to download from Maven repository. Local version is used when not specified.
@@ -86,7 +86,7 @@ public class UpdateMojo extends BaseMojo {
         src.checkFile();
         dest = world.file(versions).join(project.getArtifactId() + "-"
                 + Strings.removeRightOpt(project.getVersion(), "-SNAPSHOT") + "-" + classifier + "." + type);
-        link = world.file(bin).join(symlink == null ? name : symlink);
+        link = world.file(bin).join(symlinkName != null ? symlinkName : name);
         if (dest.exists()) {
             dest.deleteFile();
             getLog().info("U " + dest.getAbsolute());
