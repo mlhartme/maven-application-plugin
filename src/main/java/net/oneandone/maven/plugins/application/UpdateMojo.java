@@ -34,10 +34,18 @@ public class UpdateMojo extends BaseMojo {
      * Directory where to install the symlink.
      */
     @Parameter(required = true)
-    private String bin;
+    private String target;
 
     /**
-     * Name of the symlink created in bin.
+     * Directory where to install the application file referenced by the symlink.
+     * Optional, when not specified, the normal target is used.
+     */
+    @Parameter
+    private String applicationTarget;
+
+    /**
+     * Name of the symlink created in target. When not specified, the application name is used; use this config if you need to override
+     * the application name.
      */
     @Parameter
     private String symlinkName;
@@ -47,12 +55,6 @@ public class UpdateMojo extends BaseMojo {
      */
     @Parameter
     private String release;
-
-    /**
-     * Directory where to keep version of the file.
-     */
-    @Parameter(required = true)
-    private String versions;
 
     @Parameter(property = "project", required = true, readonly = true)
     private MavenProject project;
@@ -84,9 +86,9 @@ public class UpdateMojo extends BaseMojo {
             src = null; // TODO
         }
         src.checkFile();
-        dest = world.file(versions).join(project.getArtifactId() + "-"
+        dest = world.file(applicationTarget != null ? applicationTarget : target).join(project.getArtifactId() + "-"
                 + Strings.removeRightOpt(project.getVersion(), "-SNAPSHOT") + "-" + classifier + "." + type);
-        link = world.file(bin).join(symlinkName != null ? symlinkName : name);
+        link = world.file(target).join(symlinkName != null ? symlinkName : name);
         if (dest.exists()) {
             dest.deleteFile();
             getLog().info("U " + dest.getAbsolute());
