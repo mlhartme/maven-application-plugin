@@ -5,6 +5,9 @@
       <action date="2013-08-14" dev="mhm" type="update">
         Replaced deploy goal by update goal.
       </action>
+      <action date="2013-08-14" dev="mhm" type="update">
+        Permissions are configurable now, default value is "rwxr-xr-x", which differs from the previous hard-coded value "rwxrw-rw-".
+      </action>
     </release>
     <release date="2013-04-20" version="1.4.2">
       <action date="2013-04-20" dev="mhm" type="update">

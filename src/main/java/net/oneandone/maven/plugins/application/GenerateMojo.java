@@ -121,6 +121,12 @@ public class GenerateMojo extends BaseMojo {
     private String path = "";
 
     /**
+     * Permissions for application file.
+     */
+    @Parameter(defaultValue = "rwxr-xr-x")
+    protected String permissions = "";
+
+    /**
      * True to remove unused code from that application file.
      */
     @Parameter(defaultValue = "false")
@@ -237,7 +243,7 @@ public class GenerateMojo extends BaseMojo {
 
         file = getFile();
         file.writeString(launcherTemplate());
-        file.setPermissions("rwxrw-rw-");
+        file.setPermissions(permissions);
     }
 
     public String launcherTemplate() throws IOException, MojoExecutionException {

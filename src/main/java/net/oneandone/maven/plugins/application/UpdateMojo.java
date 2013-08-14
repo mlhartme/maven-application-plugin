@@ -94,6 +94,7 @@ public class UpdateMojo extends BaseMojo {
             getLog().info("A " + dest.getAbsolute());
         }
         src.copyFile(dest);
+        dest.setPermissions(src.getPermissions());
         if (link.exists()) {
             if (link.resolveLink().equals(dest)) {
                 // the link is re-created to point to the same file, so from the user's perspective, it is not updated.
