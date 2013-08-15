@@ -40,33 +40,33 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Copies an application file to some setup directory.
+ * Copies an application to some target directory and creates/updates a symlink pointing to it.
+ * The symlink is mandatory, because it allows version updates without breaking running applications.
+ * So it's not possible to only install the application file with this plugin.
  */
-@Mojo(name = "update")
+@Mojo(name = "upload")
 public class UploadMojo extends BaseMojo {
     /**
-     * Directory where to install the symlink.
+     * Symlink pointing to the application. A local file or an ssh location
      */
     @Parameter(required = true)
+    private String symlink;
+
+    /**
+     * Directory where to store application. A local directory or an ssh location.
+     * Optional, when not specified, the directory containing the symlink will be used.
+     * The name of the application in the target file is <code>
+     *   artifactId + "-" + Strings.removeRightOpt(version, "-SNAPSHOT") + "-" + classifier + "." + type);artifactId
+     * </code>. Note that snapshot suffixes are stripped, i.e. updating an snapshot overwrites
+     * the previous snapshots.
+     */
+    @Parameter
     private String target;
 
     /**
-     * Directory where to install the application file referenced by the symlink.
-     * Optional, when not specified, the normal target is used.
-     */
-    @Parameter
-    private String applicationTarget;
-
-    /**
-     * Name of the symlink created in target. When not specified, the application name is used; use this config if you need to override
-     * the application name.
-     */
-    @Parameter
-    private String symlinkName;
-
-    /**
-     * Version of the application artifact to resolve from Maven repositories. When not specified, the artifact is picked from
-     * the build directory.
+     * Version of the application artifact to resolve from Maven repositories.
+     * When not specified, the artifact is picked from the build directory. This is useful to
+     * test local builds.
      */
     @Parameter(property = "resolve")
     private String resolve;
@@ -129,9 +129,9 @@ public class UploadMojo extends BaseMojo {
                     project.getGroupId(), project.getArtifactId(), version, type, classifier));
         }
         src.checkFile();
-        dest = node(applicationTarget != null ? applicationTarget : target).join(project.getArtifactId() + "-"
+        link = node(symlink);
+        dest = (target != null ? node(target) : link.getParent()).join(project.getArtifactId() + "-"
                 + Strings.removeRightOpt(version, "-SNAPSHOT") + "-" + classifier + "." + type);
-        link = node(target).join(symlinkName != null ? symlinkName : name);
         if (dest.exists()) {
             dest.deleteFile();
             getLog().info("U " + dest.getURI());
