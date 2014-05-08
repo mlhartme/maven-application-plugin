@@ -4,7 +4,7 @@
   <parent>
     <groupId>net.oneandone.maven.poms</groupId>
     <artifactId>foss-parent</artifactId>
-    <version>1.3.3</version>
+    <version>1.4.7</version>
   </parent>
 
   <name>Maven Application Plugin</name>
@@ -30,6 +30,13 @@
   <properties>
     <oneandone.java.source>1.7</oneandone.java.source>
     <oneandone.java.target>1.7</oneandone.java.target>
+
+    <!-- too picky ... -->
+    <enforcer.skip>true</enforcer.skip>
+    <checkstyle.skip>true</checkstyle.skip>
+    <pmd.skip>true</pmd.skip>
+    <findbugs.skip>true</findbugs.skip>
+    <jacoco.skip>true</jacoco.skip>
   </properties>
 
   <dependencies>
