@@ -53,6 +53,12 @@ public class UploadMojo extends BaseMojo {
     private String symlink;
 
     /**
+     * Skip symlink update. Useful if you just need a new target file uploaded, but don't want everybody to use it.
+     */
+    @Parameter(defaultValue = "false", property = "skipSymlink")
+    private boolean skipSymlink;
+
+    /**
      * Directory where to store application. A local directory or an ssh location.
      * Optional, when not specified, the directory containing the symlink will be used.
      * The name of the application in the target file is <code>
@@ -140,22 +146,26 @@ public class UploadMojo extends BaseMojo {
         }
         src.copyFile(dest);
         dest.setPermissions(permissions);
-        if (link.exists()) {
-            if (link.resolveLink().equals(dest)) {
-                // the link is re-created to point to the same file, so from the user's perspective, it is not updated.
+        if (skipSymlink) {
+            getLog().info("symlink skipped");
+        } else {
+            if (link.exists()) {
+                if (link.resolveLink().equals(dest)) {
+                    // the link is re-created to point to the same file, so from the user's perspective, it is not updated.
+                } else {
+                    getLog().info("U " + link.getURI());
+                }
+                link.deleteFile();
             } else {
-                getLog().info("U " + link.getURI());
+                getLog().info("A " + link.getURI());
             }
-            link.deleteFile();
-        } else {
-            getLog().info("A " + link.getURI());
-        }
-        relative = dest.getRelative(link.getParent());
-        // TODO: sushi
-        if (link instanceof SshNode) {
-            ((SshNode) link).getRoot().exec(false, "cd", "/" + link.getParent().getPath(), "&&", "ln", "-s", relative, link.getName());
-        } else {
-            link.mklink(relative);
+            relative = dest.getRelative(link.getParent());
+            // TODO: sushi
+            if (link instanceof SshNode) {
+                ((SshNode) link).getRoot().exec(false, "cd", "/" + link.getParent().getPath(), "&&", "ln", "-s", relative, link.getName());
+            } else {
+                link.mklink(relative);
+            }
         }
     }
 
