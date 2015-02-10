@@ -28,7 +28,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-@Ignore // TODO: because it complains about java 8 bytecodes
 public class StripperTest {
     @Test
     public void empty() throws Exception {
