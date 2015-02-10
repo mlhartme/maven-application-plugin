@@ -166,6 +166,9 @@ public class GenerateMojo extends BaseMojo {
     @Parameter(defaultValue = "${project.build.directory}/application-strip.log")
     private String stripLog;
 
+    @Parameter(defaultValue = "true")
+    private boolean attach;
+
     @Parameter(property = "project", required = true, readonly = true)
     private MavenProject project;
 
@@ -206,7 +209,9 @@ public class GenerateMojo extends BaseMojo {
         jar();
         getLog().info(">" + size(getFile().toPath().toFile()) + getFile());
         verify();
-        projectHelper.attachArtifact(project, type, classifier, getFile().toPath().toFile());
+        if (attach) {
+            projectHelper.attachArtifact(project, type, classifier, getFile().toPath().toFile());
+        }
     }
 
     private void verify() throws MojoExecutionException {

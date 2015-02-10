@@ -2,6 +2,9 @@
 <document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
     <release date="2015-02-10" version="1.5.2">
+      <action date="2015-02-10" dev="mhm" type="add">
+        Added attach option to control if the application file is attached (i.e. Maven also deploys it).
+      </action>
       <action date="2015-02-10" dev="mhm" type="update">
         Update various Maven dependencies from 3.0.4 to 3.2.5.
       </action>
