@@ -3,6 +3,9 @@
   <body>
     <release date="2015-02-10" version="1.5.2">
       <action date="2015-02-10" dev="mhm" type="add">
+        Support webdav shares for upload.
+      </action>
+      <action date="2015-02-10" dev="mhm" type="add">
         Added attach option to control if the application file is attached (i.e. Maven also deploys it).
       </action>
       <action date="2015-02-10" dev="mhm" type="update">

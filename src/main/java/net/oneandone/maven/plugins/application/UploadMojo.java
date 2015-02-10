@@ -170,7 +170,7 @@ public class UploadMojo extends BaseMojo {
     }
 
     private Node node(String str) throws URISyntaxException, NodeInstantiationException {
-        if (str.startsWith("ssh:")) {
+        if (str.indexOf(':') > 0) {
             return world.node(str);
         } else {
             return world.file(str);
