@@ -77,6 +77,12 @@ public class UploadMojo extends BaseMojo {
     @Parameter(property = "resolve")
     private String resolve;
 
+    /**
+     * Set permissions of uploaded file?
+     */
+    @Parameter(defaultValue = "false")
+    private boolean uploadPermissions;
+
     @Parameter(property = "project", required = true, readonly = true)
     private MavenProject project;
 
@@ -145,7 +151,9 @@ public class UploadMojo extends BaseMojo {
             getLog().info("A " + dest.getURI());
         }
         src.copyFile(dest);
-        dest.setPermissions(permissions);
+        if (uploadPermissions) {
+            dest.setPermissions(permissions);
+        }
         if (skipSymlink) {
             getLog().info("symlink skipped");
         } else {
