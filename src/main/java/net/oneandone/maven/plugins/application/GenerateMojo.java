@@ -56,6 +56,12 @@ import net.oneandone.sushi.xml.Dom;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+import proguard.ClassPath;
+import proguard.ClassPathEntry;
+import proguard.Configuration;
+import proguard.ConfigurationParser;
+import proguard.ParseException;
+import proguard.ProGuard;
 
 /**
  * Generates an application file. Merges dependency jars into a single file, prepended with a launch shell script.
@@ -121,7 +127,13 @@ public class GenerateMojo extends BaseMojo {
      * True to remove unused code from that application file.
      */
     @Parameter(defaultValue = "false")
-    private boolean strip;
+    private boolean shrink;
+
+    /**
+     * Proguard options.
+     */
+    @Parameter(defaultValue = "")
+    private String shrinkOptions;
 
     /**
      * Copied verbatim to the launch code right before the final Java call,
@@ -153,9 +165,6 @@ public class GenerateMojo extends BaseMojo {
 
     @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}.jar")
     private String projectJar;
-
-    @Parameter(defaultValue = "${project.build.directory}/application-strip.log")
-    private String stripLog;
 
     @Parameter(defaultValue = "true")
     private boolean attach;
@@ -319,19 +328,76 @@ public class GenerateMojo extends BaseMojo {
             throw new MojoExecutionException("main class not found: " + main);
         }
         mainAttributes(archive.manifest.getMainAttributes());
-        if (strip) {
-            /*
-            roots = Separator.COMMA.split(extraRoots);
-            roots.add(main + ".main");
+        if (shrink) {
+            ProGuard pg;
+            Configuration config;
+
+            FileNode dir = world.getTemp().createTempDirectory();
+            FileNode in;
+            FileNode out;
+            in = dir.join("in.jar");
+            out = dir.join("out.jar");
+            archive.save(in);
+
+            config = new Configuration();
             try {
-                Stripper.run(archive, roots, world.file(stripLog)).warnings(getLog());
-            } catch (NotFoundException e) {
-                throw new MojoExecutionException("class not found", e);
-            }*/
+                addConfig("-keep public class " + main + " {\n  public static void main(java.lang.String[]); \n}\n", config);
+            } catch (ParseException e) {
+                throw new IllegalStateException(e);
+            }
+            config.shrink = true;
+            config.obfuscate = false;
+            config.optimize = false;
+            config.libraryJars = cp(runtime());
+            config.programJars = cp(in);
+            config.programJars.add(new ClassPathEntry(out.toPath().toFile(), true));
+            try {
+                addConfig(shrinkOptions, config);
+            } catch (ParseException e) {
+                throw new MojoExecutionException("invalid shrink options: " + e.getMessage(), e);
+            }
+            pg = new ProGuard(config);
+            pg.execute();
+            getLog().info("(skrinked " + in.length() + " -> " + out.length() + ")");
+            try (OutputStream dest = getFile().createAppendStream()) {
+                out.writeTo(dest);
+            }
+        } else {
+            try (OutputStream dest = getFile().createAppendStream()) {
+                archive.save(dest);
+            }
         }
-        try (OutputStream dest = getFile().createAppendStream()) {
-            archive.save(dest);
+    }
+
+    private void addConfig(String str, Configuration dest) throws ParseException, IOException {
+        ConfigurationParser parser;
+
+        parser = new ConfigurationParser(str, "note", ((FileNode) world.getWorking()).toPath().toFile(), System.getProperties());
+        try {
+            parser.parse(dest);
+        } finally {
+            parser.close();
         }
+    }
+
+    private FileNode runtime() throws IOException {
+        FileNode result;
+
+        result = world.file(System.getProperty("java.home"));
+        result.checkDirectory();
+        result = result.join("lib/rt.jar");
+        result.checkFile();
+        return result;
+    }
+
+    private static ClassPath cp(FileNode ... entries) {
+        ClassPath result;
+
+        result = new ClassPath();
+        for (FileNode entry : entries) {
+            result.add(new ClassPathEntry(entry.toPath().toFile(), false));
+        }
+        return result;
     }
 
     private static String gav(Artifact artifact) {

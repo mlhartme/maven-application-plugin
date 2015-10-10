@@ -17,7 +17,7 @@
 
   <groupId>net.oneandone.maven.plugins</groupId>
   <artifactId>application</artifactId>
-  <version>1.5.3-SNAPSHOT</version>
+  <version>1.6.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <scm>
@@ -78,6 +78,11 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>net.sf.proguard</groupId>
+      <artifactId>proguard-base</artifactId>
+      <version>5.2.1</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
