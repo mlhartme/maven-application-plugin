@@ -33,9 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
 
-import javassist.NotFoundException;
-import net.oneandone.sushi.fs.ExistsException;
-import net.oneandone.sushi.fs.filter.Filter;
 import net.oneandone.sushi.util.Separator;
 import net.oneandone.sushi.util.Substitution;
 import net.oneandone.sushi.util.SubstitutionException;
@@ -125,12 +122,6 @@ public class GenerateMojo extends BaseMojo {
      */
     @Parameter(defaultValue = "false")
     private boolean strip;
-
-    /**
-     * Additional classes or methods to consider referenced when stripping the application file. Comma-separated list.
-     */
-    @Parameter(defaultValue = "")
-    private String extraRoots = "";
 
     /**
      * Copied verbatim to the launch code right before the final Java call,
@@ -321,7 +312,6 @@ public class GenerateMojo extends BaseMojo {
 
     public void jar() throws IOException, MojoExecutionException {
         Archive archive;
-        List<String> roots;
 
         archive = Archive.createJar(world);
         addDependencies(archive);
@@ -330,13 +320,14 @@ public class GenerateMojo extends BaseMojo {
         }
         mainAttributes(archive.manifest.getMainAttributes());
         if (strip) {
+            /*
             roots = Separator.COMMA.split(extraRoots);
             roots.add(main + ".main");
             try {
                 Stripper.run(archive, roots, world.file(stripLog)).warnings(getLog());
             } catch (NotFoundException e) {
                 throw new MojoExecutionException("class not found", e);
-            }
+            }*/
         }
         try (OutputStream dest = getFile().createAppendStream()) {
             archive.save(dest);
