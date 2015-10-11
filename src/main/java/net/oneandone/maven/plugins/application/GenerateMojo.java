@@ -406,7 +406,7 @@ public class GenerateMojo extends BaseMojo {
             System.setOut(oldOut);
             System.setErr(oldErr);
         }
-        getLog().info("(skrinked " + in.length() + " -> " + out.length() + ")");
+        getLog().info("-" + size(in.length() - out.length()) + "shrinked by http://proguard.sourceforge.net/");
         try (OutputStream dest = getFile().createAppendStream()) {
             out.writeTo(dest);
         }
@@ -448,7 +448,11 @@ public class GenerateMojo extends BaseMojo {
     }
 
     private static String size(File file) {
-        return Strings.padLeft("" + ((file.length() + 512) / 1024), 5) + " kb ";
+        return size(file.length());
+    }
+
+    private static String size(long length) {
+        return Strings.padLeft("" + ((length + 512) / 1024), 5) + " kb ";
     }
 
     private void addDependencies(Archive archive) throws IOException, MojoExecutionException {
