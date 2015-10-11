@@ -35,6 +35,7 @@ package net.oneandone.maven.plugins.application;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -350,43 +351,64 @@ public class GenerateMojo extends BaseMojo {
         }
         mainAttributes(archive.manifest.getMainAttributes());
         if (shrink) {
-            ProGuard pg;
-            Configuration config;
-
-            FileNode dir = world.getTemp().createTempDirectory();
-            FileNode in;
-            FileNode out;
-            in = dir.join("in.jar");
-            out = dir.join("out.jar");
-            archive.save(in);
-
-            config = new Configuration();
-            try {
-                addConfig("-keep public class " + main + " {\n  public static void main(java.lang.String[]); \n}\n", config);
-            } catch (ParseException e) {
-                throw new IllegalStateException(e);
-            }
-            config.shrink = true;
-            config.obfuscate = false;
-            config.optimize = true;
-            config.libraryJars = cp(runtime());
-            config.programJars = cp(in);
-            config.programJars.add(new ClassPathEntry(out.toPath().toFile(), true));
-            try {
-                addConfig(shrinkOptions, config);
-            } catch (ParseException e) {
-                throw new MojoExecutionException("invalid shrink options: " + e.getMessage(), e);
-            }
-            pg = new ProGuard(config);
-            pg.execute();
-            getLog().info("(skrinked " + in.length() + " -> " + out.length() + ")");
-            try (OutputStream dest = getFile().createAppendStream()) {
-                out.writeTo(dest);
-            }
+            proguard(archive);
         } else {
             try (OutputStream dest = getFile().createAppendStream()) {
                 archive.save(dest);
             }
+        }
+    }
+
+    private void proguard(Archive archive) throws IOException, MojoExecutionException {
+        ProGuard pg;
+        Configuration config;
+
+        FileNode dir = world.getTemp().createTempDirectory();
+        FileNode in;
+        FileNode out;
+        FileNode log;
+        PrintStream oldOut;
+        PrintStream oldErr;
+
+        in = dir.join("in.jar");
+        out = dir.join("out.jar");
+        archive.save(in);
+
+        config = new Configuration();
+        try {
+            addConfig("-keep public class " + main + " {\n  public static void main(java.lang.String[]); \n}\n", config);
+        } catch (ParseException e) {
+            throw new IllegalStateException(e);
+        }
+        config.shrink = true;
+        config.obfuscate = false;
+        config.optimize = true;
+        config.libraryJars = cp(runtime());
+        config.programJars = cp(in);
+        config.programJars.add(new ClassPathEntry(out.toPath().toFile(), true));
+        try {
+            addConfig(shrinkOptions, config);
+        } catch (ParseException e) {
+            throw new MojoExecutionException("invalid shrink options: " + e.getMessage(), e);
+        }
+        log = world.file(projectJar).getParent().join("proguard.log");
+        oldOut = System.out;
+        oldErr = System.err;
+        try (PrintStream stream = new PrintStream(log.createOutputStream())) {
+            System.setOut(stream);
+            System.setErr(stream);
+            pg = new ProGuard(config);
+            pg.execute();
+        } catch (IOException e) {
+            getLog().error("shrink failed, see " + log + " for details");
+            throw e;
+        } finally {
+            System.setOut(oldOut);
+            System.setErr(oldErr);
+        }
+        getLog().info("(skrinked " + in.length() + " -> " + out.length() + ")");
+        try (OutputStream dest = getFile().createAppendStream()) {
+            out.writeTo(dest);
         }
     }
 
