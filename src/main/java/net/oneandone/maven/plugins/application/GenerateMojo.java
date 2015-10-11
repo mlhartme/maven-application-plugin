@@ -391,7 +391,7 @@ public class GenerateMojo extends BaseMojo {
         } catch (ParseException e) {
             throw new MojoExecutionException("invalid shrink options: " + e.getMessage(), e);
         }
-        log = world.file(projectJar).getParent().join("proguard.log");
+        log = world.file(projectJar).getParent().join(name + "-proguard.log");
         oldOut = System.out;
         oldErr = System.err;
         try (PrintStream stream = new PrintStream(log.createOutputStream())) {
