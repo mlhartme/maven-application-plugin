@@ -3,7 +3,11 @@
   <body>
     <release date="2015-10-10" version="1.6.0">
       <action date="2015-10-10" dev="mhm" type="update">
-        News shrink option (based on ProGuard) replaces old Javassist implementation.
+        News shrink option (based on ProGuard - http://proguard.sourceforge.net)
+        replaces old Javassist implementation.
+      </action>
+      <action date="2015-10-10" dev="mhm" type="update">
+        Switch license from Apache 2 to GPL 3 (required to link against ProGuard)
       </action>
     </release>
     <release date="2015-02-23" version="1.5.2">

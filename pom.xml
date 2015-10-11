@@ -15,6 +15,14 @@
     to java -jar. You can rename it without breaking the application.
   </description>
 
+  <licenses>
+    <license>
+      <name>Gnu General Public License, Version 3.0</name>
+      <url>http://www.gnu.org/licenses/gpl.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
   <groupId>net.oneandone.maven.plugins</groupId>
   <artifactId>application</artifactId>
   <version>1.6.0-SNAPSHOT</version>
@@ -28,6 +36,7 @@
   </scm>
 
   <properties>
+    <maven-license-plugin.header>${basedir}/src/license.header</maven-license-plugin.header>
     <!-- too picky ... -->
     <enforcer.skip>true</enforcer.skip>
     <checkstyle.skip>true</checkstyle.skip>
