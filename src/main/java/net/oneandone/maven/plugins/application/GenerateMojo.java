@@ -390,7 +390,7 @@ public class GenerateMojo extends BaseMojo {
             System.setOut(oldOut);
             System.setErr(oldErr);
         }
-        getLog().info("-" + size(in.length() - out.length()) + "shrinked by http://proguard.sourceforge.net/");
+        getLog().info("-" + size(in.length() - out.length()) + "shrunken by http://proguard.sourceforge.net/");
         try (OutputStream dest = getFile().createAppendStream()) {
             out.writeTo(dest);
         }
