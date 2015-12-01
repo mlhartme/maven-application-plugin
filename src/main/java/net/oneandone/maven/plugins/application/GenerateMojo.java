@@ -126,7 +126,8 @@ public class GenerateMojo extends BaseMojo {
     private String path = "";
 
     /**
-     * True to remove unused code from that application file.
+     * True to remove unused code from that application file. Be careful with this parameter - if your application relies on
+     * reflection or introspection, you need proper shrinkOptions to declare them.
      */
     @Parameter(defaultValue = "false")
     private boolean shrink;
