@@ -2,6 +2,8 @@
 
 ## 1.6.1 (pending)
 
+* `uploadPermissions`: changed default value from `false` to `true`
+
 * Dependency updates:
   * sushi 2.8.18 to 3.1.2
   * Maven 3.3.3 to 3.3.9

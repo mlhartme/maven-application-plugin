@@ -81,7 +81,7 @@ public class UploadMojo extends BaseMojo {
     /**
      * Set permissions of uploaded file?
      */
-    @Parameter(defaultValue = "false")
+    @Parameter(defaultValue = "true")
     private boolean uploadPermissions;
 
     @Parameter(property = "project", required = true, readonly = true)
