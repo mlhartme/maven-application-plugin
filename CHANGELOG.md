@@ -2,9 +2,11 @@
 
 ## 1.6.1 (pending)
 
+* Java 8 required to build applications
+* spelling fix: `shrunk`, not `shrunken`
 * `uploadPermissions`: changed default value from `false` to `true`
-
-* Dependency updates:
+* dependency updates:
+  * foss-parent 1.5.7 to lazy-foss-parent 1.0.1
   * sushi 2.8.18 to 3.1.2
   * Maven 3.3.3 to 3.3.9
   * maven-plugin-annotations 3.3 to 3.4
