@@ -99,8 +99,8 @@ public class UploadMojo extends BaseMojo {
     @Component
     private ArtifactResolver resolver;
 
-    public UploadMojo() {
-        this(new World());
+    public UploadMojo() throws IOException {
+        this(World.create());
     }
 
     public UploadMojo(World world) {
@@ -119,7 +119,7 @@ public class UploadMojo extends BaseMojo {
             // TODO: what if the plugin is executed twice?
             OnShutdown shutdown;
 
-            shutdown = OnShutdown.get();
+            shutdown = world.onShutdown();
             Runtime.getRuntime().removeShutdownHook(shutdown);
             shutdown.run();
         }
@@ -147,9 +147,9 @@ public class UploadMojo extends BaseMojo {
                 + Strings.removeRightOpt(version, "-SNAPSHOT") + "-" + classifier + "." + type);
         if (dest.exists()) {
             dest.deleteFile();
-            getLog().info("U " + dest.getURI());
+            getLog().info("U " + dest.getUri());
         } else {
-            getLog().info("A " + dest.getURI());
+            getLog().info("A " + dest.getUri());
         }
         src.copyFile(dest);
         if (uploadPermissions) {
@@ -162,11 +162,11 @@ public class UploadMojo extends BaseMojo {
                 if (link.resolveLink().equals(dest)) {
                     // the link is re-created to point to the same file, so from the user's perspective, it is not updated.
                 } else {
-                    getLog().info("U " + link.getURI());
+                    getLog().info("U " + link.getUri());
                 }
                 link.deleteFile();
             } else {
-                getLog().info("A " + link.getURI());
+                getLog().info("A " + link.getUri());
             }
             relative = dest.getRelative(link.getParent());
             // TODO: sushi

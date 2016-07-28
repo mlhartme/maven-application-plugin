@@ -185,8 +185,8 @@ public class GenerateMojo extends BaseMojo {
     @Component
     protected MavenProjectHelper projectHelper;
 
-    public GenerateMojo() {
-        this(new World(), null, null, null, null, null, null);
+    public GenerateMojo() throws IOException {
+        this(World.create(), null, null, null, null, null, null);
     }
 
     public GenerateMojo(World world, String name, FileNode dir, String main, String classifier, String java, String path) {
@@ -338,7 +338,7 @@ public class GenerateMojo extends BaseMojo {
         if (shrink) {
             proguard(archive);
         } else {
-            try (OutputStream dest = getFile().createAppendStream()) {
+            try (OutputStream dest = getFile().newAppendStream()) {
                 archive.save(dest);
             }
         }
@@ -379,7 +379,7 @@ public class GenerateMojo extends BaseMojo {
         log = world.file(projectJar).getParent().join(name + "-proguard.log");
         oldOut = System.out;
         oldErr = System.err;
-        try (PrintStream stream = new PrintStream(log.createOutputStream())) {
+        try (PrintStream stream = new PrintStream(log.newOutputStream())) {
             System.setOut(stream);
             System.setErr(stream);
             pg = new ProGuard(config);
@@ -391,16 +391,16 @@ public class GenerateMojo extends BaseMojo {
             System.setOut(oldOut);
             System.setErr(oldErr);
         }
-        getLog().info("-" + size(in.length() - out.length()) + "shrunk by http://proguard.sourceforge.net/");
-        try (OutputStream dest = getFile().createAppendStream()) {
-            out.writeTo(dest);
+        getLog().info("-" + size(in.size() - out.size()) + "shrunk by http://proguard.sourceforge.net/");
+        try (OutputStream dest = getFile().newAppendStream()) {
+            out.copyFileTo(dest);
         }
     }
 
     private void addConfig(String str, Configuration dest) throws ParseException, IOException {
         ConfigurationParser parser;
 
-        parser = new ConfigurationParser(str, "note", ((FileNode) world.getWorking()).toPath().toFile(), System.getProperties());
+        parser = new ConfigurationParser(str, "note", world.getWorking().toPath().toFile(), System.getProperties());
         try {
             parser.parse(dest);
         } finally {
@@ -476,7 +476,7 @@ public class GenerateMojo extends BaseMojo {
     private static final String ROOT = "component-set";
     private static final String COMPONENTS = "components";
 
-    private void copy(Node srcdir, Node destdir, List<String> duplicates) throws IOException, MojoExecutionException {
+    private void copy(Node<?> srcdir, Node<?> destdir, List<String> duplicates) throws IOException, MojoExecutionException {
         List<Node> mayEqual;
         List<Node> mayOverwrite;
         Node destfile;
@@ -484,7 +484,7 @@ public class GenerateMojo extends BaseMojo {
 
         mayEqual = find(srcdir, equal);
         mayOverwrite = find(srcdir, overwrite);
-        for (Node srcfile : srcdir.find("**/*")) {
+        for (Node<?> srcfile : srcdir.find("**/*")) {
             relative = srcfile.getRelative(srcdir);
             destfile = destdir.join(relative);
             if (srcfile.isDirectory()) {
@@ -545,7 +545,7 @@ public class GenerateMojo extends BaseMojo {
         }
     }
 
-    private void removeFiles(Node srcdir, String path) throws IOException {
+    private void removeFiles(Node<?> srcdir, String path) throws IOException {
         for (Node srcfile : srcdir.find(path)) {
             if (srcfile.isDirectory()) {
                 // skip - I'd delete all contained files
@@ -556,14 +556,14 @@ public class GenerateMojo extends BaseMojo {
         }
     }
 
-    private void concat(Node srcdir, Node destdir) throws IOException, MojoExecutionException {
+    private void concat(Node srcdir, Node<?> destdir) throws IOException, MojoExecutionException {
         for (String path : split(concat)) {
             getLog().debug("concatenating " + path);
             concat(srcdir, destdir, path);
         }
     }
 
-    private void concat(Node srcdir, Node destdir, String path) throws IOException {
+    private void concat(Node<?> srcdir, Node<?> destdir, String path) throws IOException {
         for (Node srcfile : srcdir.find(path)) {
             concatOne(srcdir, destdir, srcfile.getRelative(srcdir));
         }

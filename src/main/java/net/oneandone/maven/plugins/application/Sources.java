@@ -44,7 +44,7 @@ public class Sources {
         lst.add(source);
     }
 
-    public void addAll(Node root, Artifact source) throws IOException {
+    public void addAll(Node<?> root, Artifact source) throws IOException {
         for (Node node : root.find("**/*")) {
             add(node.getRelative(root), source);
         }
