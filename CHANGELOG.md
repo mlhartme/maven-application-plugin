@@ -5,6 +5,7 @@
 * Dependency updates:
   * sushi 2.8.18 to 3.1.2
   * Maven 3.3.3 to 3.3.9
+  * maven-plugin-annotations 3.3 to 3.4
 
 
 ## 1.6.0 (2015-10-10)
