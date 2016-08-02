@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.6.1 (pending)
+## 1.6.1 (2016-08-02)
 
 * Java 8 required to build applications
 * spelling fix: `shrunk`, not `shrunken`
