@@ -1,5 +1,6 @@
 /**
  * This file is part of maven-application-plugin.
+ * Copyright 1&1 Internet AG, https://github.com/1and1/
  *
  * maven-application-plugin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +16,36 @@
  * along with maven-application-plugin.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.oneandone.maven.plugins.application;
+
+import net.oneandone.sushi.archive.Archive;
+import net.oneandone.sushi.archive.ArchiveException;
+import net.oneandone.sushi.fs.Node;
+import net.oneandone.sushi.fs.World;
+import net.oneandone.sushi.fs.file.FileNode;
+import net.oneandone.sushi.util.Separator;
+import net.oneandone.sushi.util.Strings;
+import net.oneandone.sushi.util.Substitution;
+import net.oneandone.sushi.util.SubstitutionException;
+import net.oneandone.sushi.xml.Builder;
+import net.oneandone.sushi.xml.Dom;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
+import proguard.ClassPath;
+import proguard.ClassPathEntry;
+import proguard.Configuration;
+import proguard.ConfigurationParser;
+import proguard.ParseException;
+import proguard.ProGuard;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,36 +65,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
-
-import net.oneandone.sushi.util.Separator;
-import net.oneandone.sushi.util.Substitution;
-import net.oneandone.sushi.util.SubstitutionException;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
-import net.oneandone.sushi.archive.Archive;
-import net.oneandone.sushi.archive.ArchiveException;
-import net.oneandone.sushi.fs.World;
-import net.oneandone.sushi.fs.Node;
-import net.oneandone.sushi.fs.file.FileNode;
-import net.oneandone.sushi.util.Strings;
-import net.oneandone.sushi.xml.Builder;
-import net.oneandone.sushi.xml.Dom;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
-import proguard.ClassPath;
-import proguard.ClassPathEntry;
-import proguard.Configuration;
-import proguard.ConfigurationParser;
-import proguard.ParseException;
-import proguard.ProGuard;
 
 /**
  * Generates an application file. Merges dependency jars into a single file, prepended with a launch shell script.

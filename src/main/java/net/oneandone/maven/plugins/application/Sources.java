@@ -1,5 +1,6 @@
 /**
  * This file is part of maven-application-plugin.
+ * Copyright 1&1 Internet AG, https://github.com/1and1/
  *
  * maven-application-plugin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +17,15 @@
  */
 package net.oneandone.maven.plugins.application;
 
+import net.oneandone.sushi.fs.Node;
+import org.apache.maven.artifact.Artifact;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import net.oneandone.sushi.fs.Node;
-import org.apache.maven.artifact.Artifact;
 
 public class Sources {
     private Map<String, List<Artifact>> map;

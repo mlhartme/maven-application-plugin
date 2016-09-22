@@ -1,5 +1,6 @@
 /**
  * This file is part of maven-application-plugin.
+ * Copyright 1&1 Internet AG, https://github.com/1and1/
  *
  * maven-application-plugin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +16,6 @@
  * along with maven-application-plugin.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.oneandone.maven.plugins.application;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.List;
 
 import com.jcraft.jsch.JSchException;
 import net.oneandone.sushi.fs.Node;
@@ -39,6 +36,10 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * Copies an application to some target directory and creates/updates a symlink pointing to it.
