@@ -2,7 +2,7 @@
 
 ## 1.6.2 (pending)
 
-* Update proguard 5.2.1 to 5.3.2
+* Update proguard 5.2.1 to 5.3.3
 
 
 ## 1.6.1 (2016-08-02)
