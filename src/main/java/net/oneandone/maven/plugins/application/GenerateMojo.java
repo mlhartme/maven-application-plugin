@@ -69,7 +69,8 @@ import java.util.jar.Attributes;
 /**
  * Generates an application file. Merges dependency jars into a single file, prepended with a launch shell script.
  */
-@Mojo(name = "generate", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME)
+@Mojo(name = "generate", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME,
+      threadSafe = true)
 public class GenerateMojo extends BaseMojo {
     /**
      * Main class to be launched. Specified as a fully qualified Java Class name. Similar to the main class
@@ -345,7 +346,7 @@ public class GenerateMojo extends BaseMojo {
         }
     }
 
-    private void proguard(Archive archive) throws IOException, MojoExecutionException {
+    private synchronized void proguard(Archive archive) throws IOException, MojoExecutionException {
         ProGuard pg;
         Configuration config;
 

@@ -46,7 +46,7 @@ import java.util.List;
  * The symlink is mandatory, because it allows version updates without breaking running applications.
  * So it's not possible to only install the application file with this plugin.
  */
-@Mojo(name = "upload")
+@Mojo(name = "upload", threadSafe = true)
 public class UploadMojo extends BaseMojo {
     /**
      * Symlink pointing to the application. A local file or an ssh location
