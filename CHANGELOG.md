@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.6.2 (pending)
+## 1.6.2 (2017-08-01)
 
 * Mark goals as thread-safe
 * Update proguard 5.2.1 to 5.3.3
