@@ -25,14 +25,14 @@
 
   <groupId>net.oneandone.maven.plugins</groupId>
   <artifactId>application</artifactId>
-  <version>1.6.2-SNAPSHOT</version>
+  <version>1.6.2</version>
   <packaging>maven-plugin</packaging>
 
   <scm>
     <connection>scm:git:ssh://git@github.com/mlhartme/maven-application-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/mlhartme/maven-application-plugin.git</developerConnection>
     <url>scm:git:ssh://git@github.com/mlhartme/maven-application-plugin</url>
-    <tag>HEAD</tag>
+    <tag>application-1.6.2</tag>
   </scm>
 
   <properties>
