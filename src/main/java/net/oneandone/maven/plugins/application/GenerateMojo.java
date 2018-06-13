@@ -22,6 +22,7 @@ import net.oneandone.sushi.archive.ArchiveException;
 import net.oneandone.sushi.fs.Node;
 import net.oneandone.sushi.fs.World;
 import net.oneandone.sushi.fs.file.FileNode;
+import net.oneandone.sushi.io.OS;
 import net.oneandone.sushi.util.Separator;
 import net.oneandone.sushi.util.Strings;
 import net.oneandone.sushi.util.Substitution;
@@ -415,7 +416,11 @@ public class GenerateMojo extends BaseMojo {
 
         result = world.file(System.getProperty("java.home"));
         result.checkDirectory();
-        result = result.join("lib/rt.jar");
+        if (OS.beforeJava9()) {
+            result = result.join("lib/rt.jar");
+        } else {
+            result = result.join("jmods/java.base.jmod");
+        }
         result.checkFile();
         return result;
     }

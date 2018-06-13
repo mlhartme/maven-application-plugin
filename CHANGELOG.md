@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.6.3 (pending)
+
+* added support for Java 9+: 
+  * updated proguard library
+  * fix locating the java runtime
+
+  
 ## 1.6.2 (2017-08-01)
 
 * Mark goals as thread-safe
