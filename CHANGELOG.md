@@ -3,7 +3,8 @@
 ## 1.6.3 (pending)
 
 * added support for Java 9+: 
-  * updated proguard library
+  * updated proguard library 5.3.3 to 6.0.3
+  * updated sushi 3.1.2 to 3.2.0
   * fix locating the java runtime
 
   
