@@ -6,7 +6,7 @@ You can invoke it directly or you can pass it as an argument to java -jar. You c
 
 ## Prerequisites
 
-* Java 7 or newer
+* Java 8 or newer
 * the application file works for Linux or Mac OS. Windows is not supported - contributions welcome!
 * if you want to build the plugin: Maven 3
 
