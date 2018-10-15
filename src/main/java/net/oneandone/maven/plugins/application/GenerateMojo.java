@@ -173,9 +173,13 @@ public class GenerateMojo extends BaseMojo {
     @Parameter
     private List<String> scopes = Arrays.asList(Artifact.SCOPE_COMPILE, Artifact.SCOPE_RUNTIME);
 
+    /**
+     * Specifies the jar of the project to add to the application file.
+     */
     @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}.jar")
     private String projectJar;
 
+    /** When true, generated application files will be deployed to the Maven repository */
     @Parameter(defaultValue = "true")
     private boolean attach;
 

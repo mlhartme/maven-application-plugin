@@ -40,7 +40,7 @@ adjust the file name and make the file executable (e.g with `chmod`)
 
 Note 2: you can use `jar tf yourapp` to list the files in the resulting application file.
 
-[Generated documentation](http://mlhartme.github.io/maven-application-plugin/application/plugin-info.html)
+[Goal documentation](http://mlhartme.github.io/maven-application-plugin/application/plugin-info.html)
 
 
 ## Duplicate Files
