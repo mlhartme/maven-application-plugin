@@ -31,7 +31,7 @@ Add
       </executions>
     </plugin>
 
-to your pom.xml and run `mvn clean package` to generate the application file `target/yourapp`.
+to the build/plugins element in your pom.xml and run `mvn clean package` to generate the application file `target/yourapp`.
 
 Note: to deploy the application into your Maven repository, run mvn deploy. The plugin attaches your application file and thus Maven will 
 upload it into your repository. Please note that the deployed application file name is your projects artifact name with "-application.sh" 
@@ -40,7 +40,7 @@ adjust the file name and make the file executable (e.g with `chmod`)
 
 Note 2: you can use `jar tf yourapp` to list the files in the resulting application file.
 
-[Generated documentation](http://mlhartme.github.io/maven-application-plugin/application/)
+[Generated documentation](http://mlhartme.github.io/maven-application-plugin/application/plugin-info.html)
 
 
 ## Duplicate Files
