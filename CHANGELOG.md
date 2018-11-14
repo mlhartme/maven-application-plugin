@@ -3,10 +3,10 @@
 ## 1.6.3 (pending)
 
 * added support for Java 9+: 
-  * updated proguard library 5.3.3 to 6.0.3
+  * updated proguard library 5.3.3 to 6.1.0beta1
   * updated sushi 3.1.2 to 3.2.0
   * updated lazy-foss-parent 1.0.2 to 1.0.3
-  * fix locating the java runtime
+  * fixed locating the java runtime
 
   
 ## 1.6.2 (2017-08-01)
