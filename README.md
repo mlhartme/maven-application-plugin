@@ -76,3 +76,5 @@ Other plugins with similar functionality:
   * Maven's [Shade Plugin](http://maven.apache.org/plugins/maven-shade-plugin/plugin-info.html) can package all classes into a single jar file,
     possibly renaming duplicate classes
   * Maven's [Assembly Plugin](http://maven.apache.org/plugins/maven-assembly-plugin/) can create arbitrary archives, including jars.
+  * Springboot's Maven Plugin (namely the repackage goal) packages jar files and the classes directory and adds a special class loader to dispatch
+    resource loading into the packaged files and directory. This approach avoid the need to fix duplciate resources.
