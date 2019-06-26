@@ -300,7 +300,7 @@ public class GenerateMojo extends BaseMojo {
         Artifact a;
 
         artifacts = new ArrayList<>();
-        for (Iterator<?> i = project.getArtifacts().iterator(); i.hasNext(); ) {
+        for (Iterator<?> i = project.getArtifacts().iterator(); i.hasNext();) {
             a = (Artifact) i.next();
             if (scopes.contains(a.getScope())) {
                 artifacts.add(a);
@@ -429,7 +429,7 @@ public class GenerateMojo extends BaseMojo {
         return result;
     }
 
-    private static ClassPath cp(FileNode ... entries) {
+    private static ClassPath cp(FileNode... entries) {
         ClassPath result;
 
         result = new ClassPath();
@@ -533,8 +533,7 @@ public class GenerateMojo extends BaseMojo {
         for (String item : result) {
             if (item.contains(" ")) {
                 throw new MojoExecutionException(
-                        "Invalid space character in configuration value " + str + "\n" +
-                        "Use commas to separate multiple entries.");
+                        "Invalid space character in configuration value " + str + "\n" + "Use commas to separate multiple entries.");
             }
         }
         return result;
@@ -544,20 +543,20 @@ public class GenerateMojo extends BaseMojo {
         List<Node> mayOverwrite;
 
         mayOverwrite = new ArrayList<>();
-        for (String path : split(property)) {
-            mayOverwrite.addAll(srcdir.find(path));
+        for (String p : split(property)) {
+            mayOverwrite.addAll(srcdir.find(p));
         }
         return mayOverwrite;
     }
 
     private void removeFiles(Node srcdir) throws IOException, MojoExecutionException {
-        for (String path : split(remove)) {
-            removeFiles(srcdir, path);
+        for (String p : split(remove)) {
+            removeFiles(srcdir, p);
         }
     }
 
-    private void removeFiles(Node<?> srcdir, String path) throws IOException {
-        for (Node srcfile : srcdir.find(path)) {
+    private void removeFiles(Node<?> srcdir, String removePath) throws IOException {
+        for (Node srcfile : srcdir.find(removePath)) {
             if (srcfile.isDirectory()) {
                 // skip - I'd delete all contained files
             } else {
@@ -568,27 +567,27 @@ public class GenerateMojo extends BaseMojo {
     }
 
     private void concat(Node srcdir, Node<?> destdir) throws IOException, MojoExecutionException {
-        for (String path : split(concat)) {
-            getLog().debug("concatenating " + path);
-            concat(srcdir, destdir, path);
+        for (String p : split(concat)) {
+            getLog().debug("concatenating " + p);
+            concat(srcdir, destdir, p);
         }
     }
 
-    private void concat(Node<?> srcdir, Node<?> destdir, String path) throws IOException {
-        for (Node srcfile : srcdir.find(path)) {
+    private void concat(Node<?> srcdir, Node<?> destdir, String concatPath) throws IOException {
+        for (Node srcfile : srcdir.find(concatPath)) {
             concatOne(srcdir, destdir, srcfile.getRelative(srcdir));
         }
     }
 
-    private void concatOne(Node srcdir, Node destdir, String path) throws IOException {
+    private void concatOne(Node srcdir, Node destdir, String concatPath) throws IOException {
         Node src;
         Node dest;
         String lf;
         StringBuilder builder;
         int idx;
 
-        src = srcdir.join(path);
-        dest = destdir.join(path);
+        src = srcdir.join(concatPath);
+        dest = destdir.join(concatPath);
         if (!dest.exists()) {
             dest.getParent().mkdirsOpt();
             dest.writeString("");
@@ -603,7 +602,7 @@ public class GenerateMojo extends BaseMojo {
         builder.append(dest.readString());
         dest.writeString(builder.toString());
         src.deleteFile();
-        getLog().debug("merged " + path + ":\n" + builder);
+        getLog().debug("merged " + concatPath + ":\n" + builder);
     }
 
     private Node plexusFile(Node root) {
