@@ -36,7 +36,8 @@ to the build/plugins element in your pom.xml and run `mvn clean package` to gene
 Note: to deploy the application into your Maven repository, run mvn deploy. The plugin attaches your application file and thus Maven will 
 upload it into your repository. Please note that the deployed application file name is your projects artifact name with "-application.sh" 
 appended, it's not the name you specified with the name parameter. If users download application files from the repository, they have to 
-adjust the file name and make the file executable (e.g with `chmod`)
+adjust the file name and make the file executable (e.g with `chmod`). If you want to download with the `maven-dependency-plugin`, specify
+the artifacts of your probject together with classifier `application` and `sh`. Example: `mvn dependency:copy "-Dartifact=my.group:my-artifact:1.0.0:sh:application"
 
 Note 2: you can use `jar tf yourapp` to list the files in the resulting application file.
 
