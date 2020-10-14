@@ -1,6 +1,11 @@
 # Changelog
 
-## 1.6.3 (pending)
+## 1.6.4 (pending)
+
+* update junit 4.12 to 4.13.1
+
+
+## 1.6.3 (2019-07-01)
 
 * added support for Java 9+: 
   * updated proguard library 5.3.3 to 6.1.1
