@@ -2,6 +2,8 @@
 
 ## 1.6.4 (pending)
 
+
+* simplified build -- no need to explicitly bind plugin-plugin
 * update junit 4.12 to 4.13.1
 
 
