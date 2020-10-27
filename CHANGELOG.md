@@ -1,8 +1,9 @@
 # Changelog
 
-## 1.6.4 (pending)
+## 1.7.0 (pending)
 
 
+* update lazy-foss-parent 1.3.0 to 1.4.2. CAUTION: as a consequence, this plugin is compiled for Java 11 now
 * simplified build -- no need to explicitly bind plugin-plugin
 * update junit 4.12 to 4.13.1
 
