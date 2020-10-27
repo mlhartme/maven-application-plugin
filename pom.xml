@@ -21,7 +21,7 @@
 
   <groupId>net.oneandone.maven.plugins</groupId>
   <artifactId>application</artifactId>
-  <version>1.6.4-SNAPSHOT</version>
+  <version>1.7.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <scm>
@@ -81,12 +81,6 @@
       <groupId>net.sf.proguard</groupId>
       <artifactId>proguard-base</artifactId>
       <version>6.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.1</version>
-      <scope>test</scope>
     </dependency>
 
     <!-- to support ssh targets: -->
