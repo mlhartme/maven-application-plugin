@@ -35,7 +35,7 @@
 
   <properties>
     <maven-license-plugin.header>${basedir}/src/license.header</maven-license-plugin.header>
-    <maven.version>3.3.9</maven.version>
+    <maven.version>3.8.6</maven.version>
   </properties>
 
   <dependencies>

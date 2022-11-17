@@ -4,9 +4,10 @@
 
 * update lazy-foss-parent 1.3.0 to schmizzolin parent 1.6.1.
   CAUTION: as a consequence, this plugin is compiled for Java 17 now
+* update maven dependencies from 3.3.9 to 3.8.6
+* update maven-plugin-tools 3.5.2 to 3.6.1
 * update sushi 3.2.0 to 3.3.0
 * update jsch 0.1.53 to 0.1.55
-* update maven-plugin-tools 3.5.2 to 3.6.1
 * simplified build -- no need to explicitly bind plugin-plugin
 * dumped junit 4.12 dependency, there are no test
 
