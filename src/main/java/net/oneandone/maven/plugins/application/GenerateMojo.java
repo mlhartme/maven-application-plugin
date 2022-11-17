@@ -454,7 +454,7 @@ public class GenerateMojo extends BaseMojo {
         Sources sources;
         File file;
         Archive add;
-        Node jar;
+        FileNode jar;
         List<String> duplicatePaths;
 
         plexus = null;
@@ -537,7 +537,7 @@ public class GenerateMojo extends BaseMojo {
         return result;
     }
 
-    private List<Node> find(Node srcdir, String property) throws IOException, MojoExecutionException {
+    private List<Node> find(Node<?> srcdir, String property) throws IOException, MojoExecutionException {
         List<Node> mayOverwrite;
 
         mayOverwrite = new ArrayList<>();
@@ -547,7 +547,7 @@ public class GenerateMojo extends BaseMojo {
         return mayOverwrite;
     }
 
-    private void removeFiles(Node srcdir) throws IOException, MojoExecutionException {
+    private void removeFiles(Node<?> srcdir) throws IOException, MojoExecutionException {
         for (String p : split(remove)) {
             removeFiles(srcdir, p);
         }
