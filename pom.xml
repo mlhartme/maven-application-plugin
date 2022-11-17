@@ -44,6 +44,11 @@
       <artifactId>sushi</artifactId>
       <version>3.3.0</version>
     </dependency>
+    <dependency><!-- TODO: fixes unsatisfied link error when creating ssh filesystem in sushi -->
+      <groupId>net.java.dev.jna</groupId>
+      <artifactId>jna-platform</artifactId>
+      <version>5.12.1</version>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.maven</groupId>
