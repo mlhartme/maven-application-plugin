@@ -2,6 +2,8 @@
 
 ## 1.7.0 (pending)
 
+* update sushi 3.2.0 to 3.3.0
+* update jsch 0.1.53 to 0.1.55
 * update maven-plugin-tools 3.5.2 to 3.6.1
 * update lazy-foss-parent 1.3.0 to 1.4.2. CAUTION: as a consequence, this plugin is compiled for Java 11 now
 * simplified build -- no need to explicitly bind plugin-plugin
