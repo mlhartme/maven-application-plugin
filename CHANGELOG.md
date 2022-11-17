@@ -7,6 +7,7 @@
 * update maven dependencies from 3.3.9 to 3.8.6
 * update maven-plugin-tools 3.5.2 to 3.6.1
 * update sushi 3.2.0 to 3.3.0
+* update proguard 6.1.1 to 6.2.2
 * update jsch 0.1.53 to 0.1.55
 * simplified build -- no need to explicitly bind plugin-plugin
 * dumped junit 4.12 dependency, there are no test
