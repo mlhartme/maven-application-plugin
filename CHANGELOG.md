@@ -1,10 +1,10 @@
 # Changelog
 
-## 1.7.0 (pending)
+## 1.7.0 (2022-12-04)
 
-* update jna-platform 4.1.0 to 5.1.2 to fix unsatisfied link error with Java 17 on Mac OS Ventura
 * update lazy-foss-parent 1.3.0 to schmizzolin parent 1.6.1.
   CAUTION: as a consequence, this plugin is compiled for Java 17 now
+* update jna-platform 4.1.0 to 5.1.2 to fix unsatisfied link error with Java 17 on Mac OS Ventura
 * update maven dependencies from 3.3.9 to 3.8.6, changed scope to provided
 * update maven-plugin-tools 3.5.2 to 3.6.1
 * update sushi 3.2.0 to 3.3.0
