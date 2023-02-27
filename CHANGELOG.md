@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.1 (pending)
+
+
+* update plugin annotation 3.7.0 to 3.8.1
+
+
 ## 1.7.0 (2022-12-04)
 
 * update lazy-foss-parent 1.3.0 to schmizzolin parent 1.6.1.
