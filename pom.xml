@@ -22,7 +22,7 @@
 
   <groupId>net.oneandone.maven.plugins</groupId>
   <artifactId>application</artifactId>
-  <version>1.7.1-SNAPSHOT</version>
+  <version>1.8.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <scm>
@@ -70,12 +70,6 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
-      <version>${maven.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-compat</artifactId>
       <version>${maven.version}</version>
       <scope>provided</scope>
     </dependency>
