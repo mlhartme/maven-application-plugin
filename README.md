@@ -17,7 +17,7 @@ Add
     <plugin>
       <groupId>net.oneandone.maven.plugins</groupId>
       <artifactId>application</artifactId>
-      <version>1.6.2</version>
+      <version>1.7.0</version>
       <configuration>
         <name>yourapp</name>
         <main>foo.yourapp.Main</main>

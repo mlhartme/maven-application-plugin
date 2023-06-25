@@ -2,7 +2,7 @@
 
 ## 1.7.1 (pending)
 
-
+* update parent 1.6.1 to 1.6.2
 * update plugin annotation 3.7.0 to 3.8.1
 
 
