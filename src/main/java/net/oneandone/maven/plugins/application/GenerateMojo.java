@@ -268,7 +268,8 @@ public class GenerateMojo extends BaseMojo {
         variables.put("name", name);
         variables.put("main", main);
         variables.put("options", options);
-        variables.put("optionsVariable", getOptsVar());
+        variables.put("optionsVariable", getAppVarPrefix() + "_OPTS");
+        variables.put("javaVariable", getAppVarPrefix() + "_JAVA");
         variables.put("extensions", Separator.RAW_LINE.join(extensions));
         src = launcher != null ? world.file(launcher) : world.resource("launcher");
         str = src.readString();
@@ -313,12 +314,11 @@ public class GenerateMojo extends BaseMojo {
         return artifacts;
     }
 
-    public String getOptsVar() {
-        final String suffix = "_OPTS";
+    public String getAppVarPrefix() {
         StringBuilder builder;
         char c;
 
-        builder = new StringBuilder(name.length() + suffix.length());
+        builder = new StringBuilder();
         for (int i = 0; i < name.length(); i++) {
             c = name.charAt(i);
             if (Character.isLetter(c) || (i > 0 && Character.isDigit(c))) {
@@ -327,7 +327,6 @@ public class GenerateMojo extends BaseMojo {
                 builder.append('_');
             }
         }
-        builder.append(suffix);
         return builder.toString();
     }
 

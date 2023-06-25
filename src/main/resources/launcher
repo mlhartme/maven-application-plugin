@@ -15,7 +15,11 @@ APP=$(dirname "$APP")
 APP=$(cd "$APP" && pwd)
 APP="$APP/$NAME"
 PATH=${{path}}
-JAVA=${{java}}
+if [ -z $${{javaVariable}} ] ; then
+  JAVA=${{java}}
+else
+  JAVA=$${{javaVariable}}
+fi
 OPTIONS=${{options}}
 MAIN=${{main}}
 NAME=${{name}}
