@@ -34,7 +34,7 @@
 
   <properties>
     <maven-license-plugin.header>${basedir}/src/license.header</maven-license-plugin.header>
-    <maven.version>3.8.6</maven.version>
+    <maven.version>3.9.2</maven.version>
   </properties>
 
   <dependencies>
@@ -42,11 +42,6 @@
       <groupId>net.oneandone</groupId>
       <artifactId>sushi</artifactId>
       <version>3.3.0</version>
-    </dependency>
-    <dependency><!-- TODO: fixes unsatisfied link error when creating ssh filesystem in sushi -->
-      <groupId>net.java.dev.jna</groupId>
-      <artifactId>jna-platform</artifactId>
-      <version>5.12.1</version>
     </dependency>
 
     <dependency>
@@ -76,7 +71,7 @@
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.8.1</version>
+      <version>3.9.0</version>
       <!-- annotations are not needed for plugin execution so we can remove this dependency
            for execution with using provided scope -->
       <scope>provided</scope>
@@ -86,39 +81,6 @@
       <groupId>net.sf.proguard</groupId>
       <artifactId>proguard-base</artifactId>
       <version>6.2.2</version>
-    </dependency>
-
-    <!-- to support ssh targets: -->
-    <dependency>
-      <groupId>com.jcraft</groupId>
-      <artifactId>jsch</artifactId>
-      <version>0.1.55</version>
-    </dependency>
-    <dependency>
-      <groupId>com.jcraft</groupId>
-      <artifactId>jsch.agentproxy.core</artifactId>
-      <version>0.0.9</version>
-    </dependency>
-    <dependency>
-      <groupId>com.jcraft</groupId>
-      <artifactId>jsch.agentproxy.jsch</artifactId>
-      <version>0.0.9</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.jcraft</groupId>
-          <artifactId>jsch</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.jcraft</groupId>
-      <artifactId>jsch.agentproxy.sshagent</artifactId>
-      <version>0.0.9</version>
-    </dependency>
-    <dependency>
-      <groupId>com.jcraft</groupId>
-      <artifactId>jsch.agentproxy.usocket-jna</artifactId>
-      <version>0.0.9</version>
     </dependency>
   </dependencies>
 
