@@ -1,11 +1,11 @@
 # Changelog
 
-## 1.8.0 (pending)
+## 1.8.0 (2023-10-07)
 
 * improved launcher script: users can now define an <app>_JAVA variable to configure java executable  
   to launch the application (this has precendence of the java build parameter of the plugin)
 * removed upload goal because it uses deprecated maven apis and it's kind of off-topic
-* update parent 1.6.1 to 1.6.2
+* update parent 1.6.1 to 1.6.3
 * update plugin annotation 3.7.0 to 3.8.1
 
 
