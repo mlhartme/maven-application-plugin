@@ -29,7 +29,7 @@ public class Sources {
     private Map<String, List<Artifact>> map;
 
     public Sources() {
-        this.map = new HashMap<String, List<Artifact>>();
+        this.map = new HashMap<>();
     }
 
     public void add(String path, Artifact source) {
@@ -37,7 +37,7 @@ public class Sources {
 
         lst = map.get(path);
         if (lst == null) {
-            lst = new ArrayList<Artifact>();
+            lst = new ArrayList<>();
             map.put(path, lst);
         }
         lst.add(source);
