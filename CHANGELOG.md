@@ -3,6 +3,7 @@
 ## TODO
 
 * name to maven-executable-plugin
+* launcher: use /usr/libexec/java_home on Mac OS
 
 
 ## 1.8.0 (2023-10-07)
