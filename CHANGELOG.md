@@ -2,7 +2,7 @@
 
 ## TODO
 
-* name to maven-executable-plugin
+* rename to maven-executable-plugin
 * launcher: use /usr/libexec/java_home on Mac OS
 
 
