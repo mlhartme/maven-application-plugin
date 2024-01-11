@@ -6,6 +6,11 @@
 * launcher: use /usr/libexec/java_home on Mac OS
 
 
+## 1.8.1 (pending)
+
+* update plugin annotations to 3.11.0
+
+
 ## 1.8.0 (2023-10-07)
 
 * improved launcher script: users can now define an <app>_JAVA variable to configure java executable  
