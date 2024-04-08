@@ -8,7 +8,7 @@
 
 ## 1.8.1 (pending)
 
-* update plugin annotations to 3.11.0
+* update plugin tools and annotations to 3.12.0
 
 
 ## 1.8.0 (2023-10-07)
