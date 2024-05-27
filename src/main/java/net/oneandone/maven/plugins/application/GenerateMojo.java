@@ -191,7 +191,13 @@ public class GenerateMojo extends BaseMojo {
     protected MavenProjectHelper projectHelper;
 
     public GenerateMojo() throws IOException {
-        this(World.create(), null, null, null, null, null, null);
+        this(createWorld(), null, null, null, null, null, null);
+    }
+
+    private static World createWorld() {
+        World world = World.createMinimal();
+        world.withStandardFilesystems(false);
+        return world;
     }
 
     public GenerateMojo(World world, String name, FileNode dir, String main, String classifier, String java, String path) {
