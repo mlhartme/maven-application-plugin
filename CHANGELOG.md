@@ -11,6 +11,7 @@
 * update plugin tools and annotations to 3.12.0
 * update parent pom 1.6.3 to 1.6.5
 * update maven libraries from 3.9.2 to 3.9.7
+* update maven plugin annotations 3.12.0 to 3.13.0
 # fix: disable netrc loading because it's not needed and a broken netrc breaks the plugin
 
 
