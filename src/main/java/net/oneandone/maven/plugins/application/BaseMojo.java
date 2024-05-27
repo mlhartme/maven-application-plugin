@@ -21,8 +21,6 @@ import net.oneandone.sushi.fs.World;
 import net.oneandone.sushi.fs.Node;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.io.IOException;
-
 public abstract class BaseMojo extends AbstractMojo {
     protected final World world;
 
@@ -57,10 +55,6 @@ public abstract class BaseMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "rwxr-xr-x")
     protected String permissions = "";
-
-    public BaseMojo() throws IOException {
-        this(World.create());
-    }
 
     public BaseMojo(World world) {
         this.world = world;
