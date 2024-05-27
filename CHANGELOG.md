@@ -6,7 +6,7 @@
 * launcher: configurable java version, use jenv and /usr/libexec/java_home to switch
 
 
-## 1.8.1 (pending)
+## 1.8.1 (2024-05-27)
 
 * update plugin tools and annotations to 3.12.0
 * update parent pom 1.6.3 to 1.6.5
