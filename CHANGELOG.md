@@ -9,6 +9,7 @@
 ## 1.8.1 (pending)
 
 * update plugin tools and annotations to 3.12.0
+* update parent pom 1.6.3 to 1.6.5
 # fix: disable netrc loading because it's not needed and a broken netrc breaks the plugin
 
 
