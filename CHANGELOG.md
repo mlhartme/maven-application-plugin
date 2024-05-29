@@ -6,7 +6,7 @@
 * launcher: configurable java version, use jenv and /usr/libexec/java_home to switch
 
 
-## 1.8.2 (pending)
+## 1.8.2 (2024-05-29)
 
 # fix plugin goal prefix (was help, should be application)
 * update maven plugin plugin 3.12.0 to 3.13.0
