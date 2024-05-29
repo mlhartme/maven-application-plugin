@@ -80,7 +80,7 @@
     <dependency>
       <groupId>net.sf.proguard</groupId>
       <artifactId>proguard-base</artifactId>
-      <version>6.2.2</version>
+      <version>6.2.2</version><!-- TODO: library looks dead, no updates for several years ... -->
     </dependency>
   </dependencies>
 
@@ -92,7 +92,7 @@
           <artifactId>maven-plugin-plugin</artifactId>
           <version>3.13.0</version>
           <configuration>
-            <goalPrefix>help</goalPrefix>
+            <goalPrefix>application</goalPrefix>
           </configuration>
           <executions>
             <execution>

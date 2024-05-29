@@ -8,6 +8,7 @@
 
 ## 1.8.2 (pending)
 
+# fix plugin goal prefix (was help, should be application)
 * update maven plugin plugin 3.12.0 to 3.13.0
 
 
