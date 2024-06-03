@@ -5,6 +5,10 @@
 * rename to maven-executable-plugin
 * launcher: configurable java version, use jenv and /usr/libexec/java_home to switch
 
+## 1.8.3 (pending)
+
+* update plugin plugin and annotations 3.13.0 to 3.13.1
+
 
 ## 1.8.2 (2024-05-29)
 
